@@ -1,6 +1,7 @@
 import { Heart, Github, Twitter, Play, ChevronLeft, ChevronRight, CheckCircle, X } from 'lucide-react'
 import { animate, stagger, inView, timeline } from '@motionone/dom'
 import { useEffect, useRef, useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import './LandingPage.css'
 import logoImg from './assets/Logo.png'
 import genAIImg from './assets/GenAi.svg'
@@ -31,6 +32,7 @@ import { Helmet } from 'react-helmet'
 import { motion } from 'framer-motion'
 
 function LandingPage() {
+  const navigate = useNavigate()
   const heroRef = useRef(null)
   const headingRef = useRef(null)
   const subheadingRef = useRef(null)
@@ -118,6 +120,10 @@ function LandingPage() {
 
   const [currentTestimonial, setCurrentTestimonial] = useState(0)
 
+  // State for notification message
+  const [notificationMessage, setNotificationMessage] = useState('');
+  const [showNotification, setShowNotification] = useState(false);
+
   useEffect(() => {
     // Handle scroll to contact form when #contact is present in URL
     const scrollToContact = () => {
@@ -134,11 +140,31 @@ function LandingPage() {
     // Add event listener for hash changes
     window.addEventListener('hashchange', scrollToContact);
     
+    // Check for redirect message
+    const redirectMessage = localStorage.getItem('paymentRedirectMessage');
+    if (redirectMessage) {
+      setNotificationMessage(redirectMessage);
+      setShowNotification(true);
+      
+      // Remove the message from localStorage
+      localStorage.removeItem('paymentRedirectMessage');
+      
+      // Auto-hide notification after 5 seconds
+      setTimeout(() => {
+        setShowNotification(false);
+      }, 5000);
+    }
+    
     // Clean up event listener on component unmount
     return () => {
       window.removeEventListener('hashchange', scrollToContact);
     };
   }, []);
+  
+  // Function to close notification
+  const closeNotification = () => {
+    setShowNotification(false);
+  };
   
   // Separate useEffect for animations to avoid early return
   useEffect(() => {
@@ -465,14 +491,44 @@ function LandingPage() {
             
             if (verifyResponse.data) {
               // Payment verification successful
-              setPopupMessage('Payment successful! Your consultation has been booked.');
-              setShowSuccessPopup(true);
-              setCurrentStep(4); // Move to success step
+              // Prepare payment details to pass to success page
+              const paymentDetails = {
+                name: bookingData.name,
+                service: bookingData.service || 'Consultation',
+                amount: '₹99',
+                date: new Date().toLocaleDateString('en-IN', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                }),
+                time: new Date().toLocaleTimeString('en-IN', {
+                  hour: '2-digit',
+                  minute: '2-digit'
+                })
+              };
               
-              // Auto hide popup after 5 seconds
-              setTimeout(() => {
-                setShowSuccessPopup(false);
-              }, 5000);
+              // Set payment verification flag in localStorage
+              localStorage.setItem('paymentVerified', 'true');
+              
+              // Redirect to success page with payment details
+              navigate('/payment-success', { 
+                state: { 
+                  paymentDetails: {
+                    name: bookingData.name,
+                    service: bookingData.service || 'Consultation',
+                    amount: '₹99',
+                    date: new Date().toLocaleDateString('en-IN', {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric'
+                    }),
+                    time: new Date().toLocaleTimeString('en-IN', {
+                      hour: '2-digit',
+                      minute: '2-digit'
+                    })
+                  }
+                }
+              });
             } else {
               // Payment verification failed
               setFormError('Payment verification failed. Please contact support.');
@@ -547,6 +603,37 @@ function LandingPage() {
 
   return (
     <>
+      {/* Payment Redirect Error Notification */}
+      {showNotification && (
+        <div
+          className="fixed top-4 right-4 z-50 bg-red-50 rounded-lg shadow-xl p-4 sm:p-6 max-w-sm w-full border-l-4 border-red-500"
+          style={{
+            animation: 'slideIn 0.5s forwards',
+            boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
+          }}
+        >
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <svg className="h-6 w-6 text-red-600" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3 w-0 flex-1 pt-0.5">
+              <p className="text-sm font-medium text-red-800 text-left">{notificationMessage}</p>
+            </div>
+            <div className="ml-4 flex-shrink-0 flex">
+              <button
+                className="bg-red-50 rounded-md inline-flex text-red-400 hover:text-red-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                onClick={closeNotification}
+              >
+                <span className="sr-only">Close</span>
+                <X className="h-5 w-5" aria-hidden="true" />
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+      
       {/* Success Popup */}
       {showSuccessPopup && (
         <div

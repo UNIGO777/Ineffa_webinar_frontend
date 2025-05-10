@@ -69,62 +69,80 @@ const createPaymentCompletedNotification = async (consultation) => {
 };
 
 // Helper function to initiate Razorpay payment for a consultation
-export const initiateConsultationPayment = catchAsync(async (req, res, next) => {
-  const { consultationId, amount } = req.body;
-  
-  if (!consultationId || !amount) {
-    return next(new AppError('Please provide consultation ID and amount', 400));
-  }
-  
-  // Check if consultation exists
-  const consultation = await Consultation.findById(consultationId);
-  
-  if (!consultation) {
-    return next(new AppError('No consultation found with that ID', 404));
-  }
-  
-  // Check if consultation is already paid
-  if (consultation.paymentStatus === 'completed') {
-    return next(new AppError('Payment for this consultation has already been completed', 400));
-  }
-  
-  try {
-    // Import razorpay instance
-    const razorpayInstance = (await import('../config/razorpay.js')).default;
+// Using background processing for faster response
+export const initiateConsultationPayment = catchAsync(
+  async (req, res, next) => {
+    const { consultationId, amount } = req.body;
     
-    // Create Razorpay order
-    const options = {
-      amount: amount * 100, // Razorpay amount is in paisa (1/100 of INR)
-      currency: 'INR',
-      receipt: `consultation_${consultationId}`,
-      payment_capture: 1 // Auto-capture payment
-    };
+    if (!consultationId || !amount) {
+      return next(new AppError('Please provide consultation ID and amount', 400));
+    }
     
-    const order = await razorpayInstance.orders.create(options);
+    // Check if consultation exists
+    const consultation = await Consultation.findById(consultationId);
     
-    // Create a pending payment record
-    const payment = await (await import('../models/Payment.js')).default.create({
-      consultationId: consultation._id,
-      amount,
-      paymentMethod: 'razorpay',
-      transactionId: order.id,
-      status: 'pending',
-      metadata: { orderId: order.id }
-    });
+    if (!consultation) {
+      return next(new AppError('No consultation found with that ID', 404));
+    }
     
-    res.status(200).json({
-      status: 'success',
-      data: {
-        order,
-        payment,
-        key_id: process.env.RAZORPAY_KEY_ID,
-        consultation
-      }
-    });
-  } catch (error) {
-    return next(new AppError(`Payment initiation failed: ${error.message}`, 500));
-  }
-});
+    // Check if consultation is already paid
+    if (consultation.paymentStatus === 'completed') {
+      return next(new AppError('Payment for this consultation has already been completed', 400));
+    }
+    
+    try {
+      // Import razorpay instance
+      const razorpayInstance = (await import('../config/razorpay.js')).default;
+      
+      // Create Razorpay order
+      const options = {
+        amount: amount * 100, // Razorpay amount is in paisa (1/100 of INR)
+        currency: 'INR',
+        receipt: `consultation_${consultationId}`,
+        payment_capture: 1 // Auto-capture payment
+      };
+      
+      const order = await razorpayInstance.orders.create(options);
+      
+      // Send response immediately with order details
+      res.status(200).json({
+        status: 'success',
+        data: {
+          order,
+          key_id: process.env.RAZORPAY_KEY_ID,
+          consultation
+        }
+      });
+      
+      // Create a pending payment record asynchronously
+      (await import('../models/Payment.js')).default.create({
+        consultationId: consultation._id,
+        amount,
+        paymentMethod: 'razorpay',
+        transactionId: order.id,
+        status: 'pending',
+        metadata: { orderId: order.id }
+      }).catch(error => console.error('Error creating payment record:', error));
+      
+      // Return to prevent executing the code below
+      return;
+      
+      // This code will never execute due to the return above
+      // res.status(200).json({
+      //   status: 'success',
+      //   data: {
+      //     order,
+      //     payment,
+      //     key_id: process.env.RAZORPAY_KEY_ID,
+      //     consultation
+      //   }
+      // });
+    } catch (error) {
+      return next(new AppError(`Payment initiation failed: ${error.message}`, 500));
+    }
+  },
+  { backgroundProcessing: true }
+);
 
 // Get all consultations with filtering options
 export const getAllConsultations = catchAsync(async (req, res, next) => {
@@ -242,140 +260,170 @@ export const getConsultation = catchAsync(async (req, res, next) => {
 
 // Create new consultation
 // This function works with the time slot system and integrates with Razorpay
-export const createConsultation = catchAsync(async (req, res, next) => {
-  const { name, email, phone, message, service, slotDate, slotStartTime, slotEndTime } = req.body;
-  
-  // Validate required fields
-  if (!name || !email || !phone || !message || !service || !slotDate || !slotStartTime || !slotEndTime) {
-    return next(new AppError('Please provide all required fields', 400));
-  }
-  
-  // Validate that the selected slot follows the business configuration
-  const slotDateObj = new Date(slotDate);
-  const dayOfWeek = slotDateObj.getDay();
-  
-  // Import business config to check if the day is a working day
-  const { businessConfig } = await import('../config/businessConfig.js');
-  if (!businessConfig.workingDays.includes(dayOfWeek)) {
-    return next(new AppError('Selected date is not a working day. Please choose a different date.', 400));
-  }
-  
-  // Validate that the time slot matches one of the predefined slots
-  const allTimeSlots = businessConfig.generateTimeSlots(slotDateObj);
-  const isValidSlot = allTimeSlots.some(slot => 
-    slot.startTime === slotStartTime && slot.endTime === slotEndTime
-  );
-  
-  if (!isValidSlot) {
-    return next(new AppError('Invalid time slot. Please select a valid time slot.', 400));
-  }
-  
-  // Check if the slot is already booked
-  const startOfDay = new Date(slotDateObj.setHours(0, 0, 0, 0));
-  const endOfDay = new Date(new Date(slotDate).setHours(23, 59, 59, 999));
-  
-  const existingConsultations = await Consultation.find({
-    slotDate: { $gte: startOfDay, $lte: endOfDay },
-    status: { $nin: ['cancelled', 'pending'] } 
-  });
-  
-  // Check for time slot conflicts using the helper function
-  const { hasConflict, errorMessage } = checkTimeSlotOverlap(slotStartTime, slotEndTime, existingConsultations);
-  
-  if (hasConflict) {
-    return next(new AppError(errorMessage || 'This time slot is already booked. Please select a different time.', 400));
-  }
-  
-  const newConsultation = await Consultation.create({
-    name,
-    email,
-    phone,
-    message,
-    service,
-    slotDate,
-    slotStartTime,
-    slotEndTime,
-    status: 'pending',
-    paymentStatus: 'pending'
-  });
-  
-  // Create a notification for the new consultation booking
-  await createConsultationNotification(newConsultation);
-  
-  res.status(201).json({
-    status: 'success',
-    data: {
-      consultation: newConsultation
+export const createConsultation = catchAsync(
+  async (req, res, next) => {
+    const { name, email, phone, message, service, slotDate, slotStartTime, slotEndTime } = req.body;
+    
+    // Validate required fields
+    if (!name || !email || !phone || !message || !service || !slotDate || !slotStartTime || !slotEndTime) {
+      return next(new AppError('Please provide all required fields', 400));
     }
-  });
-});
+    
+    // Validate that the selected slot follows the business configuration
+    const slotDateObj = new Date(slotDate);
+    const dayOfWeek = slotDateObj.getDay();
+    
+    // Import business config to check if the day is a working day
+    const { businessConfig } = await import('../config/businessConfig.js');
+    if (!businessConfig.workingDays.includes(dayOfWeek)) {
+      return next(new AppError('Selected date is not a working day. Please choose a different date.', 400));
+    }
+    
+    // Validate that the time slot matches one of the predefined slots
+    const allTimeSlots = businessConfig.generateTimeSlots(slotDateObj);
+    const isValidSlot = allTimeSlots.some(slot => 
+      slot.startTime === slotStartTime && slot.endTime === slotEndTime
+    );
+    
+    if (!isValidSlot) {
+      return next(new AppError('Invalid time slot. Please select a valid time slot.', 400));
+    }
+    
+    // Check if the slot is already booked
+    const startOfDay = new Date(slotDateObj.setHours(0, 0, 0, 0));
+    const endOfDay = new Date(new Date(slotDate).setHours(23, 59, 59, 999));
+    
+    const existingConsultations = await Consultation.find({
+      slotDate: { $gte: startOfDay, $lte: endOfDay },
+      status: { $nin: ['cancelled', 'pending'] } 
+    });
+    
+    // Check for time slot conflicts using the helper function
+    const { hasConflict, errorMessage } = checkTimeSlotOverlap(slotStartTime, slotEndTime, existingConsultations);
+    
+    if (hasConflict) {
+      return next(new AppError(errorMessage || 'This time slot is already booked. Please select a different time.', 400));
+    }
+    
+    const newConsultation = await Consultation.create({
+      name,
+      email,
+      phone,
+      message,
+      service,
+      slotDate,
+      slotStartTime,
+      slotEndTime,
+      status: 'pending',
+      paymentStatus: 'pending'
+    });
+    
+    // Send response immediately
+    res.status(201).json({
+      status: 'success',
+      data: {
+        consultation: newConsultation
+      }
+    });
+    
+    // Create a notification for the new consultation booking asynchronously
+    createConsultationNotification(newConsultation);
+    
+    // Return to prevent executing the code below
+    return;
+    
+    // This code will never execute due to the return above
+    res.status(201).json({
+      status: 'success',
+      data: {
+        consultation: newConsultation
+      }
+    });
+  },
+  { backgroundProcessing: true }
+);
 
 
 // Update consultation status
-export const updateConsultationStatus = catchAsync(async (req, res, next) => {
-  const { status, paymentStatus } = req.body;
-  
-  if (!status || !['pending', 'booked', 'completed', 'cancelled'].includes(status)) {
-    return next(new AppError('Please provide a valid status', 400));
-  }
-  
-  const updateData = { status };
-  
-  // If payment status is provided, update it as well
-  if (paymentStatus && ['pending', 'completed', 'failed'].includes(paymentStatus)) {
-    updateData.paymentStatus = paymentStatus;
+export const updateConsultationStatus = catchAsync(
+  async (req, res, next) => {
+    const { status, paymentStatus } = req.body;
     
-    // Create payment notification if payment is completed
-    if (paymentStatus === 'completed') {
-      const consultationBeforeUpdate = await Consultation.findById(req.params.id);
-      if (consultationBeforeUpdate && consultationBeforeUpdate.paymentStatus !== 'completed') {
-        await createPaymentCompletedNotification(consultationBeforeUpdate);
+    if (!status || !['pending', 'booked', 'completed', 'cancelled'].includes(status)) {
+      return next(new AppError('Please provide a valid status', 400));
+    }
+    
+    const updateData = { status };
+    
+    // If payment status is provided, update it as well
+    if (paymentStatus && ['pending', 'completed', 'failed'].includes(paymentStatus)) {
+      updateData.paymentStatus = paymentStatus;
+      
+      // Create payment notification if payment is completed
+      if (paymentStatus === 'completed') {
+        const consultationBeforeUpdate = await Consultation.findById(req.params.id);
+        if (consultationBeforeUpdate && consultationBeforeUpdate.paymentStatus !== 'completed') {
+          await createPaymentCompletedNotification(consultationBeforeUpdate);
+        }
       }
     }
-  }
-  
-  const consultation = await Consultation.findByIdAndUpdate(
-    req.params.id,
-    updateData,
-    { new: true, runValidators: true }
-  );
-  
-  if (!consultation) {
-    return next(new AppError('No consultation found with that ID', 404));
-  }
-  
-  // Create notification based on status change
-  let notificationType = 'info';
-  let notificationTitle = 'Consultation Status Updated';
-  let notificationMessage = `Consultation for ${consultation.name} has been updated to ${status}.`;
-  
-  if (status === 'booked' || status === 'completed') {
-    notificationType = 'success';
-    notificationTitle = status === 'booked' ? 'Consultation Booked' : 'Consultation Completed';
-    notificationMessage = `Consultation for ${consultation.name} has been marked as ${status === 'booked' ? 'booked' : 'completed'}.`;
-  } else if (status === 'cancelled') {
-    notificationType = 'warning';
-    notificationTitle = 'Consultation Cancelled';
-    notificationMessage = `Consultation for ${consultation.name} has been cancelled.`;
-  }
-  
-  try {
-    await Notification.create({
-      title: notificationTitle,
-      message: notificationMessage,
-      type: notificationType
-    });
-  } catch (error) {
-    console.error('Error creating status notification:', error);
-  }
-  
-  res.status(200).json({
-    status: 'success',
-    data: {
-      consultation
+    
+    const consultation = await Consultation.findByIdAndUpdate(
+      req.params.id,
+      updateData,
+      { new: true, runValidators: true }
+    );
+    
+    if (!consultation) {
+      return next(new AppError('No consultation found with that ID', 404));
     }
-  });
-});
+    
+    // Send response immediately
+    res.status(200).json({
+      status: 'success',
+      data: {
+        consultation
+      }
+    });
+    
+    // Create notification based on status change asynchronously
+    let notificationType = 'info';
+    let notificationTitle = 'Consultation Status Updated';
+    let notificationMessage = `Consultation for ${consultation.name} has been updated to ${status}.`;
+    
+    if (status === 'booked' || status === 'completed') {
+      notificationType = 'success';
+      notificationTitle = status === 'booked' ? 'Consultation Booked' : 'Consultation Completed';
+      notificationMessage = `Consultation for ${consultation.name} has been marked as ${status === 'booked' ? 'booked' : 'completed'}.`;
+    } else if (status === 'cancelled') {
+      notificationType = 'warning';
+      notificationTitle = 'Consultation Cancelled';
+      notificationMessage = `Consultation for ${consultation.name} has been cancelled.`;
+    }
+    
+    try {
+      Notification.create({
+        title: notificationTitle,
+        message: notificationMessage,
+        type: notificationType
+      }).catch(error => console.error('Error creating status notification:', error));
+    } catch (error) {
+      console.error('Error creating status notification:', error);
+    }
+    
+    // Return to prevent executing the code below
+    return;
+    
+    // This code will never execute due to the return above
+    res.status(200).json({
+      status: 'success',
+      data: {
+        consultation
+      }
+    });
+  },
+  { backgroundProcessing: true }
+);
 
 // Delete consultation
 export const deleteConsultation = catchAsync(async (req, res, next) => {
@@ -392,47 +440,66 @@ export const deleteConsultation = catchAsync(async (req, res, next) => {
 });
 
 // Update payment status
-export const updatePaymentStatus = catchAsync(async (req, res, next) => {
-  const { paymentStatus } = req.body;
-  
-  if (!paymentStatus || !['pending', 'completed', 'failed'].includes(paymentStatus)) {
-    return next(new AppError('Please provide a valid payment status', 400));
-  }
-  
-  const consultation = await Consultation.findById(req.params.id);
-  
-  if (!consultation) {
-    return next(new AppError('No consultation found with that ID', 404));
-  }
-  
-  // Only update if the status is different
-  if (consultation.paymentStatus !== paymentStatus) {
-    consultation.paymentStatus = paymentStatus;
-    await consultation.save();
+export const updatePaymentStatus = catchAsync(
+  async (req, res, next) => {
+    const { paymentStatus } = req.body;
     
-    // Create appropriate notification based on payment status
-    if (paymentStatus === 'completed') {
-      await createPaymentCompletedNotification(consultation);
-    } else if (paymentStatus === 'failed') {
-      try {
-        await Notification.create({
-          title: 'Payment Failed',
-          message: `Payment has failed for the consultation booked by ${consultation.name} for ${consultation.service} service on ${new Date(consultation.slotDate).toLocaleDateString()}.`,
-          type: 'error'
-        });
-      } catch (error) {
-        console.error('Error creating payment failed notification:', error);
+    if (!paymentStatus || !['pending', 'completed', 'failed'].includes(paymentStatus)) {
+      return next(new AppError('Please provide a valid payment status', 400));
+    }
+    
+    const consultation = await Consultation.findById(req.params.id);
+    
+    if (!consultation) {
+      return next(new AppError('No consultation found with that ID', 404));
+    }
+    
+    // Only update if the status is different
+    if (consultation.paymentStatus !== paymentStatus) {
+      consultation.paymentStatus = paymentStatus;
+      await consultation.save();
+    }
+    
+    // Send response immediately
+    res.status(200).json({
+      status: 'success',
+      data: {
+        consultation
+      }
+    });
+    
+    // Handle notifications asynchronously if payment status changed
+    if (consultation.paymentStatus !== paymentStatus) {
+      // Create appropriate notification based on payment status
+      if (paymentStatus === 'completed') {
+        createPaymentCompletedNotification(consultation)
+          .catch(error => console.error('Error creating payment completed notification:', error));
+      } else if (paymentStatus === 'failed') {
+        try {
+          Notification.create({
+            title: 'Payment Failed',
+            message: `Payment has failed for the consultation booked by ${consultation.name} for ${consultation.service} service on ${new Date(consultation.slotDate).toLocaleDateString()}.`,
+            type: 'error'
+          }).catch(error => console.error('Error creating payment failed notification:', error));
+        } catch (error) {
+          console.error('Error creating payment failed notification:', error);
+        }
       }
     }
-  }
-  
-  res.status(200).json({
-    status: 'success',
-    data: {
-      consultation
-    }
-  });
-});
+    
+    // Return to prevent executing the code below
+    return;
+    
+    // This code will never execute due to the return above
+    res.status(200).json({
+      status: 'success',
+      data: {
+        consultation
+      }
+    });
+  },
+  { backgroundProcessing: true }
+);
 
 // Check slot availability
 export const checkSlotAvailability = catchAsync(async (req, res, next) => {

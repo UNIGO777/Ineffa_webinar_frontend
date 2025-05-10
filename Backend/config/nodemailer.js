@@ -62,12 +62,31 @@ export const sendConsultationConfirmation = async (email, bookingDetails) => {
           <p><strong>Date:</strong> ${bookingDetails.date}</p>
           <p><strong>Time:</strong> ${bookingDetails.time}</p>
           <p><strong>Service:</strong> ${bookingDetails.service}</p>
-          ${bookingDetails.consultantName ? `<p><strong>Consultant:</strong> ${bookingDetails.consultantName}</p>` : ''}
+         
+          ${bookingDetails.zoomLink ? `
+          <div style="margin-top: 15px; padding: 10px; background-color: #e6f3ff; border-radius: 5px;">
+            <p style="margin: 0;"><strong>Zoom Meeting Link:</strong></p>
+            <a href="${bookingDetails.zoomLink}" style="color: #0066cc; text-decoration: none; word-break: break-all;">${bookingDetails.zoomLink}</a>
+          </div>
+          ` : ''}
         </div>
 
-        <p>Please make sure to join the consultation at the scheduled time. You will receive a separate email with the meeting link (if applicable).</p>
+        <p>Please make sure to join the consultation at the scheduled time using the Zoom link provided above.</p>
         
-        <p>If you need to reschedule or cancel your consultation, please contact us at least 24 hours before the scheduled time.</p>
+        <div style="text-align: center; margin: 25px 0;">
+          <a href="https://calendly.com/ineffa/30min" 
+             style="background-color: #4CAF50; 
+                    color: white; 
+                    padding: 12px 25px; 
+                    text-decoration: none; 
+                    border-radius: 5px; 
+                    display: inline-block;
+                    font-weight: bold;">
+                    Reschedule Appointment
+          </a>
+        </div>
+        
+        <p>If you need to cancel your consultation, please contact us at least 24 hours before the scheduled time.</p>
         
         <p>For any queries, feel free to reach out to our support team.</p>
         

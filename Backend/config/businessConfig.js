@@ -13,8 +13,8 @@ export const businessConfig = {
   slotDuration: 30,
   
   // Days of week when business is open (0 = Sunday, 1 = Monday, etc.)
-  // By default, open Monday to Friday
-  workingDays: [1, 2, 3, 4, 5],
+  // Now open all week including weekends
+  workingDays: [0, 1, 2, 3, 4, 5, 6],
   
   // Function to generate time slots for a given date
   generateTimeSlots: function(date) {

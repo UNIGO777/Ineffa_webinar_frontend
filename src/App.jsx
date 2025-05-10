@@ -1,10 +1,55 @@
-import React, { Suspense } from 'react'
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import React, { Suspense, useEffect, useState } from 'react'
+import { BrowserRouter, Routes, Route, useLocation, Navigate, useNavigate } from 'react-router-dom'
 import { motion } from 'framer-motion'
 import './App.css'
+import Calandry from './Calandry'
 
 const LandingPage = React.lazy(() => import('./Landing page/LandingPage1'))
 const AdminPanel = React.lazy(() => import('./AdminPanel/Index'))
+const PaymentSuccess = React.lazy(() => import('./Landing page/PaymentSuccess'))
+
+// Protected route component for PaymentSuccess page
+const ProtectedPaymentRoute = () => {
+  const location = useLocation()
+  const navigate = useNavigate()
+  
+  // Check if user has payment verification in localStorage
+  const hasPaymentVerification = localStorage.getItem('paymentVerified') === 'true'
+  
+  // If no verification, redirect to home with a message
+  useEffect(() => {
+    if (!hasPaymentVerification && !location.state?.paymentDetails) {
+      // Set a message in localStorage to display on the landing page
+      localStorage.setItem('paymentRedirectMessage', 'Direct access to payment success page is not allowed. Please complete the payment process first.')
+      navigate('/', { replace: true })
+    }
+  }, [hasPaymentVerification, location.state, navigate])
+  
+  // Clear the verification after successful access
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem('paymentVerified')
+    }
+  }, [])
+  
+  // If verification checks pass, render the PaymentSuccess component
+  if (!hasPaymentVerification && !location.state?.paymentDetails) {
+    return null // Return null while redirect happens in useEffect
+  }
+  
+  return <PaymentSuccess />
+}
+
+// Scroll to top component that executes on route change
+const ScrollToTop = () => {
+  const location = useLocation()
+  
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [location])
+
+  return null
+}
 
 const LoadingSpinner = () => {
   const letterVariants = {
@@ -74,10 +119,13 @@ const LoadingSpinner = () => {
 const App = () => {
   return (
     <BrowserRouter>
+      <ScrollToTop />
       <Suspense fallback={<LoadingSpinner />}>
         <Routes>
           <Route path="/" element={<LandingPage />} />
           <Route path="/admin/*" element={<AdminPanel />} />
+          <Route path="/calandry" element={<Calandry />} />
+          <Route path="/payment-success" element={<ProtectedPaymentRoute />} />
         </Routes>
       </Suspense>
     </BrowserRouter>
