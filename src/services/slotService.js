@@ -67,14 +67,14 @@ export const slotService = {
 // Payment API services for public use (no authentication required)
 export const publicPaymentService = {
   // Initiate payment for a consultation
-  initiatePayment: async (consultationId, amount) => {
+  initiatePayment: async (consultationId) => {
     try {
       const response = await fetch(`${API_URL}/consultations/payment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ consultationId, amount }),
+        body: JSON.stringify({ consultationId }),
       });
       return handleResponse(response);
     } catch (error) {

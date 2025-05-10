@@ -458,7 +458,7 @@ function LandingPage() {
       setFormError('');
 
       // Initiate payment
-      const response = await publicPaymentService.initiatePayment(consultationId, 99);
+      const response = await publicPaymentService.initiatePayment(consultationId );
 
       // Get Razorpay order details
       const { order, key_id } = response.data;

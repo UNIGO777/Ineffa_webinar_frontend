@@ -14,7 +14,8 @@ import {
   Mail,
   Calendar as CalendarIcon,
   AlertCircle,
-  Loader
+  Loader,
+  Link
 } from 'lucide-react';
 import { consultationService } from '../../services/api';
 import { useNavigate } from 'react-router-dom';
@@ -61,6 +62,8 @@ const Consultations = () => {
         };
         
         const response = await consultationService.getAllConsultations(currentPage, 10, filters);
+
+        console.log(response.data.consultations); // Add this line to check the response data
         
         // Transform the data to match our component's expected format
         const formattedConsultations = response.data.consultations.map(consultation => ({
@@ -75,7 +78,8 @@ const Consultations = () => {
           status: consultation.status,
           paymentStatus: consultation.paymentStatus,
           notes: consultation.message,
-          createdAt: consultation.createdAt
+          createdAt: consultation.createdAt,
+          meetingLink: consultation.meetingLink // Added meetingLink
         }));
         
         setConsultations(formattedConsultations);
@@ -90,7 +94,7 @@ const Consultations = () => {
     
     fetchConsultations();
   }, [currentPage, statusFilter, selectedDate, showDatePicker]);
-  
+
   // Helper function to calculate duration from start and end time
   const calculateDuration = (startTime, endTime) => {
     if (!startTime || !endTime) return 'N/A';
@@ -191,7 +195,8 @@ const Consultations = () => {
           phone: consultation.phone,
           type: consultation.service,
           status: consultation.status,
-          paymentStatus: consultation.paymentStatus
+          paymentStatus: consultation.paymentStatus,
+          meetingLink: consultation.meetingLink // Added meetingLink
         }));
         
         setUpcomingConsultations(formattedUpcoming);
@@ -381,6 +386,14 @@ const Consultations = () => {
                       <Mail size={14} className="mr-1 text-blue-600" />
                       {consultation.email}
                     </div>
+                    {consultation.meetingLink && (
+                      <div className="flex items-center text-sm text-blue-600 mt-2">
+                        <Link size={14} className="mr-1" />
+                        <a href={consultation.meetingLink} target="_blank" rel="noopener noreferrer">
+                          Join Meeting
+                        </a>
+                      </div>
+                    )}
                     <button
                         className="text-xs mt-4 text-blue-600 hover:text-blue-800 font-medium"
                         onClick={() => handleViewConsultation(consultation.id)}
@@ -460,7 +473,8 @@ const Consultations = () => {
                                   status: consultation.status,
                                   paymentStatus: consultation.paymentStatus,
                                   notes: consultation.message,
-                                  createdAt: consultation.createdAt
+                                  createdAt: consultation.createdAt,
+                                  meetingLink: consultation.meetingLink
                                 }));
                                 setConsultations(formattedConsultations);
                                 setTotalPages(response.totalPages || 1);
@@ -486,6 +500,17 @@ const Consultations = () => {
                             <div className="ml-4 text-left">
                               <div className="text-sm font-medium text-gray-900">{consultation.customer}</div>
                               <div className="text-sm text-gray-500">{consultation.email}</div>
+                              {consultation.meetingLink && (
+                                <a 
+                                  href={consultation.meetingLink}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="text-sm text-blue-600 hover:text-blue-800 flex items-center mt-1"
+                                >
+                                  <Link size={14} className="mr-1" />
+                                  Join Meeting
+                                </a>
+                              )}
                             </div>
                           </div>
                         </td>
@@ -496,8 +521,6 @@ const Consultations = () => {
                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{consultation.type}</td>
                         <td className="px-6 py-4 whitespace-nowrap">
                           {renderStatusBadge(consultation.status)}
-                          
-                          
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           <button 
@@ -506,7 +529,6 @@ const Consultations = () => {
                           >
                             View
                           </button>
-                          
                         </td>
                       </tr>
                     ))
@@ -568,6 +590,5 @@ const Consultations = () => {
     </motion.div>
   );
 };
-
 
 export default Consultations;
