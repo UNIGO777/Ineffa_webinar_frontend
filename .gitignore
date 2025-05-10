@@ -13,6 +13,7 @@ package-lock.json
 yarn.lock
 .pnp
 .pnp.js
+Backend
 
 # Build outputs
 dist
