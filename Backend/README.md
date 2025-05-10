@@ -106,4 +106,4 @@ To get a token, use the login endpoint with a valid phone number, password, and 
 1. Request an OTP using the `/api/admin/send-otp` endpoint with the admin's phone number
 2. The OTP will be sent to the admin's registered email
 3. Use the `/api/admin/login` endpoint with the phone number, password, and OTP to get a JWT token
-4. Use the JWT token for subsequent requests to protected endpoints
+4. Use the JWT token for subsequent requests to protected endpoints# Ineffa_landing_page_-backend
