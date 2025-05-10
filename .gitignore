@@ -13,7 +13,6 @@ package-lock.json
 yarn.lock
 .pnp
 .pnp.js
-Backend
 
 # Build outputs
 dist
@@ -67,3 +66,5 @@ debug.log
 .Spotlight-V100
 .Trashes
 ehthumbs.db
+# Backend folder
+backend/
