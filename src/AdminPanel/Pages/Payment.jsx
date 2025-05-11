@@ -50,6 +50,11 @@ const Payment = () => {
   const [showReceiptModal, setShowReceiptModal] = useState(false);
   const [receiptData, setReceiptData] = useState(null);
   
+  // State for export modal
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [exportUrl, setExportUrl] = useState('');
+  const [exportLoading, setExportLoading] = useState(false);
+  
   // Fetch payments from API with filters
   const fetchPayments = async () => {
     try {
@@ -195,6 +200,40 @@ const Payment = () => {
         }
       }}
     >
+      {/* Export Modal */}
+      {showExportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white rounded-lg p-6 w-full max-w-md">
+            <div className="flex justify-between items-center mb-4">
+              <h3 className="text-xl font-semibold text-gray-800">Export Payments</h3>
+              <button 
+                onClick={() => setShowExportModal(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                <X size={20} />
+              </button>
+            </div>
+            
+            <div className="mb-6 text-center">
+              <FileText size={48} className="mx-auto mb-4 text-blue-600" />
+              <p className="text-gray-600 mb-2">Your export is ready!</p>
+              <p className="text-sm text-gray-500 mb-4">Click the button below to download the Excel file with all completed payments.</p>
+            </div>
+            
+            <div className="flex justify-center">
+              <a 
+                href={exportUrl}
+                download
+                className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center"
+                onClick={() => setShowExportModal(false)}
+              >
+                <Download size={16} className="mr-2" />
+                Download Excel
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-6">
         <motion.div 
@@ -236,8 +275,39 @@ const Payment = () => {
             <RefreshCw size={16} className={`mr-2 ${refreshing ? 'animate-spin' : ''}`} />
             Refresh
           </button>
-          <button className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2 rounded-lg transition-all duration-300 flex items-center justify-center shadow-sm">
-            <Download size={16} className="mr-2" />
+          <button 
+            className="bg-gradient-to-r from-blue-600 to-blue-700 text-white px-4 py-2 rounded-lg transition-all duration-300 flex items-center justify-center shadow-sm"
+            onClick={async () => {
+              try {
+                setExportLoading(true);
+                // Prepare filters for export (using current filters)
+                const exportFilters = {
+                  status: 'completed', // Only export completed payments
+                  startDate: format(startDate, 'yyyy-MM-dd'),
+                  endDate: format(endDate, 'yyyy-MM-dd')
+                };
+                
+                // Get export URL
+                const url = await paymentService.exportPayments(exportFilters);
+                setExportUrl(url);
+                setShowExportModal(true);
+              } catch (err) {
+                console.error('Error preparing export:', err);
+                // Show error message to user
+                setError(err.message || 'Failed to export payments. Please check your authentication and try again.');
+                // Auto-hide error after 5 seconds
+                setTimeout(() => setError(null), 5000);
+              } finally {
+                setExportLoading(false);
+              }
+            }}
+            disabled={exportLoading}
+          >
+            {exportLoading ? (
+              <Loader size={16} className="mr-2 animate-spin" />
+            ) : (
+              <Download size={16} className="mr-2" />
+            )}
             Export
           </button>
         </motion.div>

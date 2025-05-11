@@ -135,4 +135,53 @@ export const paymentService = {
       throw error;
     }
   },
+  
+  // Export payments to Excel
+  exportPayments: async (filters = {}) => {
+    try {
+      // Build query parameters
+      const queryParams = new URLSearchParams();
+      
+      // Add filters if provided
+      if (filters.status && filters.status !== 'all') {
+        queryParams.append('status', filters.status);
+      }
+      
+      if (filters.startDate && filters.endDate) {
+        queryParams.append('startDate', filters.startDate);
+        queryParams.append('endDate', filters.endDate);
+      }
+      
+      // Get authentication token
+      const token = localStorage.getItem('adminToken');
+      if (!token) {
+        throw new Error('Authentication token not found. Please log in again.');
+      }
+      
+      // Create a blob URL by making a fetch request with authentication
+      const response = await fetch(`${API_URL}/payments/export?${queryParams.toString()}`, {
+        method: 'GET',
+        headers: {
+          ...getAuthHeader(),
+        },
+      });
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || 'Failed to export payments');
+      }
+      
+      // Create a blob from the response
+      const blob = await response.blob();
+      
+      // Create a URL for the blob
+      const downloadUrl = URL.createObjectURL(blob);
+      
+      // Return the URL for direct download
+      return downloadUrl;
+    } catch (error) {
+      console.error('Error exporting payments:', error);
+      throw error;
+    }
+  },
 };
