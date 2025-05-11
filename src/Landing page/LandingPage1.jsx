@@ -56,7 +56,7 @@ function LandingPage() {
   // State for consultation booking form
   const [currentStep, setCurrentStep] = useState(0)
   const [bookingData, setBookingData] = useState({})
-  const [selectedDate, setSelectedDate] = useState(null)
+  const [selectedDate, setSelectedDate] = useState(new Date())
   const [availableSlots, setAvailableSlots] = useState([])
   const [loadingSlots, setLoadingSlots] = useState(false)
   const [formError, setFormError] = useState('')

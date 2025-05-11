@@ -18,12 +18,16 @@ const Home = () => {
   const formattedDate = format(todayDate, 'EEEE, MMMM d, yyyy');
   const currentYear = todayDate.getFullYear();
   
+  // State for month filter
+  const [selectedMonth, setSelectedMonth] = useState('');
+  
   // Fetch dashboard stats
   useEffect(() => {
     const fetchDashboardStats = async () => {
       try {
         setLoading(true);
-        const response = await dashboardService.getDashboardStats();
+        // Add month parameter to the request if a month is selected
+        const response = await dashboardService.getDashboardStats(selectedMonth ? { month: selectedMonth } : {});
         setDashboardData(response.data);
         setError(null);
       } catch (err) {
@@ -35,7 +39,7 @@ const Home = () => {
     };
 
     fetchDashboardStats();
-  }, []);
+  }, [selectedMonth]); // Re-fetch when selected month changes
 
   const navigate = useNavigate();
 
@@ -44,7 +48,12 @@ const Home = () => {
     const fetchAnalyticsData = async () => {
       try {
         setAnalyticsLoading(true);
-        const response = await dashboardService.getMonthlyAnalytics(currentYear);
+        // Pass both year and month parameters if month is selected
+        const params = { year: currentYear };
+        if (selectedMonth) {
+          params.month = selectedMonth;
+        }
+        const response = await dashboardService.getMonthlyAnalytics(params);
         setAnalyticsData(response.data);
         setAnalyticsError(null);
       } catch (err) {
@@ -56,7 +65,7 @@ const Home = () => {
     };
 
     fetchAnalyticsData();
-  }, [currentYear]);
+  }, [currentYear, selectedMonth]); // Re-fetch when year or month changes
   
   // Default values in case data is still loading
   const paymentStats = dashboardData?.paymentStats || {
@@ -68,8 +77,10 @@ const Home = () => {
   
   const consultationStats = dashboardData?.consultationStats || {
     total: 0,
+    booked: 0,
     completed: 0,
     upcoming: 0,
+    canceled: 0,
     growth: 0
   };
   
@@ -110,6 +121,29 @@ const Home = () => {
           <p className="text-gray-500 mt-1">{formattedDate}</p>
         </motion.div>
         
+        <motion.div variants={itemVariants} className="flex items-center">
+          <label htmlFor="month-filter" className="mr-2 text-gray-600 font-medium">Filter by Month:</label>
+          <select
+            id="month-filter"
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(e.target.value)}
+            className="bg-white border border-gray-300 text-gray-700 py-2 px-4 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+          >
+            <option value="">All Months</option>
+            <option value="1">January</option>
+            <option value="2">February</option>
+            <option value="3">March</option>
+            <option value="4">April</option>
+            <option value="5">May</option>
+            <option value="6">June</option>
+            <option value="7">July</option>
+            <option value="8">August</option>
+            <option value="9">September</option>
+            <option value="10">October</option>
+            <option value="11">November</option>
+            <option value="12">December</option>
+          </select>
+        </motion.div>
       </div>
       
       {/* Stats Overview */}
@@ -145,10 +179,10 @@ const Home = () => {
           
           {/* Total Consultations */}
           <motion.div 
-            className="bg-white p-6 rounded-2xl transition-shadow duration-300 transform hover:-translate-y-1"
+            className="bg-white  rounded-2xl transition-shadow duration-300 transform hover:-translate-y-1"
             variants={itemVariants}
           >
-            <div className="flex items-start space-x-4">
+            <div className='bg-white p-6 rounded-2xl transition-shadow duration-300 transform hover:-translate-y-1'><div className="flex items-start space-x-4">
               <div className="rounded-full bg-gradient-to-br from-purple-100 to-purple-200 p-4">
                 <Users size={28} className="text-purple-600" />
               </div>
@@ -156,7 +190,21 @@ const Home = () => {
                 <p className="text-sm font-medium text-gray-500">Total Consultations</p>
                 <h3 className="text-2xl font-bold text-gray-800 mt-1">{consultationStats.total}</h3>
                
-              </div>
+              </div></div>
+              <div className="mt-4 grid grid-cols-3 gap-2 text-xs">
+                  <div className="flex items-center">
+                    <span className="w-2 h-2 rounded-full bg-green-500 mr-1"></span>
+                    <span>Completed: {consultationStats.completed}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="w-2 h-2 rounded-full bg-blue-500 mr-1"></span>
+                    <span>Booked: {consultationStats.booked}</span>
+                  </div>
+                  <div className="flex items-center">
+                    <span className="w-2 h-2 rounded-full bg-red-500 mr-1"></span>
+                    <span>Canceled: {consultationStats.canceled || 0}</span>
+                  </div>
+                </div>
             </div>
           </motion.div>
 

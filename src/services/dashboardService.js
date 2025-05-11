@@ -21,9 +21,14 @@ const getAuthHeader = () => {
 // Dashboard API services
 export const dashboardService = {
   // Get dashboard statistics
-  getDashboardStats: async () => {
+  getDashboardStats: async (params = {}) => {
     try {
-      const response = await fetch(`${API_URL}/dashboard/stats`, {
+      // Build query string from params
+      const queryString = Object.keys(params).length > 0
+        ? '?' + new URLSearchParams(params).toString()
+        : '';
+      
+      const response = await fetch(`${API_URL}/dashboard/stats${queryString}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -38,9 +43,14 @@ export const dashboardService = {
   },
 
   // Get monthly analytics data
-  getMonthlyAnalytics: async (year = new Date().getFullYear()) => {
+  getMonthlyAnalytics: async (params = {}) => {
     try {
-      const response = await fetch(`${API_URL}/dashboard/analytics?year=${year}`, {
+      // Build query string from params
+      const queryString = Object.keys(params).length > 0
+        ? '?' + new URLSearchParams(params).toString()
+        : '';
+      
+      const response = await fetch(`${API_URL}/dashboard/analytics${queryString}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
