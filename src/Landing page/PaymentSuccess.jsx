@@ -55,6 +55,11 @@ const PaymentSuccess = () => {
   };
 
   useEffect(() => {
+    // Track purchase event with Facebook Pixel
+    if (window.fbq) {
+      fbq('track', 'Purchase', {currency: "USD", value: 30.00});
+    }
+    
     // Animate the success elements when component mounts
     if (successRef.current && checkmarkRef.current && messageRef.current && detailsRef.current) {
       // Animate the checkmark with a bounce effect

@@ -155,9 +155,28 @@ function LandingPage() {
       }, 5000);
     }
     
+    // Add Facebook Pixel tracking for the payment button
+    const handlePurchaseEvent = function() {
+      if (window.fbq) {
+        fbq('track', 'Purchase', {currency: "USD", value: 30.00});
+      }
+    };
+    
+    
+    const addToCartButton = document.getElementById('addToCartButton');
+    if (addToCartButton) {
+      addToCartButton.addEventListener('click', handlePurchaseEvent);
+    }
+    
     // Clean up event listener on component unmount
     return () => {
       window.removeEventListener('hashchange', scrollToContact);
+      
+      // Clean up Facebook Pixel event listener
+      const addToCartButton = document.getElementById('addToCartButton');
+      if (addToCartButton) {
+        addToCartButton.removeEventListener('click', handlePurchaseEvent);
+      }
     };
   }, []);
   
@@ -376,6 +395,7 @@ function LandingPage() {
       })
     }
   }, [])
+  
 
   // Fetch available slots for a given date
   const fetchAvailableSlots = async (date) => {
@@ -1248,6 +1268,7 @@ function LandingPage() {
                         Back
                       </button>
                       <button
+                        id="addToCartButton"
                         onClick={handlePayment}
                         className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200 flex items-center"
                       >
@@ -1296,6 +1317,7 @@ function LandingPage() {
               )}
             </div>
           </section>
+         
 
           {/* Portfolio Section - Full Width */}
           <section ref={portfolioSectionRef} className="w-full bg-[#0e172d] sm:bg-white py-5 md:py-6 lg:py-12">
