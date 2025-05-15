@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, useLocation, Navigate, useNavigate } from
 import { motion } from 'framer-motion'
 import './App.css'
 import Calandry from './Calandry'
+import RescheduleConsultaion from './Landing page/RescheduleConsultaion'
 
 const LandingPage = React.lazy(() => import('./Landing page/LandingPage1'))
 const AdminPanel = React.lazy(() => import('./AdminPanel/Index'))
@@ -126,6 +127,7 @@ const App = () => {
           <Route path="/admin/*" element={<AdminPanel />} />
           <Route path="/calandry" element={<Calandry />} />
           <Route path="/payment-success" element={<ProtectedPaymentRoute />} />
+          <Route path="/reshedule-consultaion" element={<RescheduleConsultaion />} />
         </Routes>
       </Suspense>
     </BrowserRouter>
