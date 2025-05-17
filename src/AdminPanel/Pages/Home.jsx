@@ -26,7 +26,6 @@ const Home = () => {
     const fetchDashboardStats = async () => {
       try {
         setLoading(true);
-        // Add month parameter to the request if a month is selected
         const response = await dashboardService.getDashboardStats(selectedMonth ? { month: selectedMonth } : {});
         setDashboardData(response.data);
         setError(null);
@@ -39,7 +38,7 @@ const Home = () => {
     };
 
     fetchDashboardStats();
-  }, [selectedMonth]); // Re-fetch when selected month changes
+  }, [selectedMonth]);
 
   const navigate = useNavigate();
 
@@ -48,7 +47,6 @@ const Home = () => {
     const fetchAnalyticsData = async () => {
       try {
         setAnalyticsLoading(true);
-        // Pass both year and month parameters if month is selected
         const params = { year: currentYear };
         if (selectedMonth) {
           params.month = selectedMonth;
@@ -65,7 +63,7 @@ const Home = () => {
     };
 
     fetchAnalyticsData();
-  }, [currentYear, selectedMonth]); // Re-fetch when year or month changes
+  }, [currentYear, selectedMonth]);
   
   // Default values in case data is still loading
   const paymentStats = dashboardData?.paymentStats || {
@@ -84,7 +82,6 @@ const Home = () => {
     growth: 0
   };
   
-  const todaysAppointments = dashboardData?.todaysAppointments || [];
   const recentPayments = dashboardData?.recentPayments || [];
 
   const containerVariants = {
@@ -157,7 +154,7 @@ const Home = () => {
         </div>
       ) : (
         <motion.div 
-          className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-8"
+          className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-8"
           variants={containerVariants}
         >
           {/* Payment Stats */}
@@ -172,72 +169,38 @@ const Home = () => {
               <div className="flex-1 text-left">
                 <p className="text-sm font-medium text-gray-500">Total Revenue</p>
                 <h3 className="text-2xl font-bold text-gray-800 mt-1 flex items-center"><IndianRupee className='w-5'/>{paymentStats.total.toLocaleString()}</h3>
-               
               </div>
             </div>
           </motion.div>
           
           {/* Total Consultations */}
           <motion.div 
-            className="bg-white  rounded-2xl transition-shadow duration-300 transform hover:-translate-y-1"
+            className="bg-white rounded-2xl transition-shadow duration-300 transform hover:-translate-y-1"
             variants={itemVariants}
           >
-            <div className='bg-white p-6 rounded-2xl transition-shadow duration-300 transform hover:-translate-y-1'><div className="flex items-start space-x-4">
-              <div className="rounded-full bg-gradient-to-br from-purple-100 to-purple-200 p-4">
-                <Users size={28} className="text-purple-600" />
-              </div>
-              <div className="flex-1 text-left">
-                <p className="text-sm font-medium text-gray-500">Total Consultations</p>
-                <h3 className="text-2xl font-bold text-gray-800 mt-1">{consultationStats.total}</h3>
-               
-              </div></div>
-              <div className="mt-4 grid grid-cols-3 gap-2 text-xs">
-                  <div className="flex items-center">
-                    <span className="w-2 h-2 rounded-full bg-green-500 mr-1"></span>
-                    <span>Completed: {consultationStats.completed}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <span className="w-2 h-2 rounded-full bg-blue-500 mr-1"></span>
-                    <span>Booked: {consultationStats.booked}</span>
-                  </div>
-                  <div className="flex items-center">
-                    <span className="w-2 h-2 rounded-full bg-red-500 mr-1"></span>
-                    <span>Canceled: {consultationStats.canceled || 0}</span>
-                  </div>
+            <div className='bg-white p-6 rounded-2xl transition-shadow duration-300 transform hover:-translate-y-1'>
+              <div className="flex items-start space-x-4">
+                <div className="rounded-full bg-gradient-to-br from-purple-100 to-purple-200 p-4">
+                  <Users size={28} className="text-purple-600" />
                 </div>
-            </div>
-          </motion.div>
-
-          {/* Pending Payments */}
-          <motion.div 
-            className="bg-white p-6 rounded-2xl transition-shadow duration-300 transform hover:-translate-y-1"
-            variants={itemVariants}
-          >
-            <div className="flex items-start space-x-4">
-              <div className="rounded-full bg-gradient-to-br from-amber-100 to-amber-200 p-4">
-                <AlertCircle size={28} className="text-amber-600" />
+                <div className="flex-1 text-left">
+                  <p className="text-sm font-medium text-gray-500">Total Consultations</p>
+                  <h3 className="text-2xl font-bold text-gray-800 mt-1">{consultationStats.total}</h3>
+                </div>
               </div>
-              <div className="flex-1 text-left">
-                <p className="text-sm font-medium text-gray-500">Pending Payments</p>
-                <h3 className="text-2xl font-bold text-gray-800 mt-1 flex items-center"><IndianRupee className='w-5'/>{paymentStats.pending.toLocaleString()}</h3>
-                <p className="text-xs text-gray-500 mt-2">Requires attention</p>
-              </div>
-            </div>
-          </motion.div>
-
-          {/* Upcoming Consultations */}
-          <motion.div 
-            className="bg-white p-6 rounded-2xl transition-shadow duration-300 transform hover:-translate-y-1"
-            variants={itemVariants}
-          >
-            <div className="flex items-start space-x-4">
-              <div className="rounded-full bg-gradient-to-br from-green-100 to-green-200 p-4">
-                <Clock size={28} className="text-green-600" />
-              </div>
-              <div className="flex-1 text-left">
-                <p className="text-sm font-medium text-gray-500">Upcoming Today</p>
-                <h3 className="text-2xl font-bold text-gray-800 mt-1">{consultationStats.upcoming}</h3>
-                <p className="text-xs text-gray-500 mt-2">Consultations scheduled</p>
+              <div className="mt-4 grid grid-cols-3 gap-2 text-xs">
+                <div className="flex items-center">
+                  <span className="w-2 h-2 rounded-full bg-green-500 mr-1"></span>
+                  <span>Completed: {consultationStats.completed}</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="w-2 h-2 rounded-full bg-blue-500 mr-1"></span>
+                  <span>Booked: {consultationStats.booked}</span>
+                </div>
+                <div className="flex items-center">
+                  <span className="w-2 h-2 rounded-full bg-red-500 mr-1"></span>
+                  <span>Canceled: {consultationStats.canceled || 0}</span>
+                </div>
               </div>
             </div>
           </motion.div>
@@ -254,69 +217,7 @@ const Home = () => {
           <p className="text-red-500">{error}</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Today's Appointments */}
-          <motion.div 
-            className="lg:col-span-2 bg-white rounded-2xl overflow-hidden"
-            variants={itemVariants}
-          >
-            <div className="p-6 border-b border-gray-100">
-              <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold text-gray-800">Today's Consultations</h2>
-                <span className="bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 text-xs font-medium px-3 py-1 rounded-full">
-                  {todaysAppointments.length} Total
-                </span>
-              </div>
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="bg-gray-50">
-                  <tr className="text-xs uppercase tracking-wider text-gray-700">
-                    <th className="px-6 py-4 text-left">Time</th>
-                    <th className="px-6 py-4 text-left">Patient</th>
-                    <th className="px-6 py-4 text-left">Type</th>
-                    <th className="px-6 py-4 text-left">Status</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-100">
-                  {todaysAppointments.length === 0 ? (
-                    <tr>
-                      <td colSpan="4" className="px-6 py-4 text-center text-gray-500">
-                        No consultations scheduled for today
-                      </td>
-                    </tr>
-                  ) : (
-                    todaysAppointments.map((appointment) => (
-                      <tr key={appointment._id} className="hover:bg-gray-50 transition-colors">
-                        <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                          {appointment.slotTime}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-700">
-                          {appointment.patientName}
-                        </td>
-                        <td className="px-6 py-4 text-sm text-gray-700">
-                          {appointment.consultationType}
-                        </td>
-                        <td className="px-6 py-4">
-                          <span className={`px-3 py-1 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            appointment.status === 'completed' 
-                              ? 'bg-gradient-to-r from-green-100 to-green-200 text-green-800' 
-                              : appointment.status === 'in-progress' 
-                              ? 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800' 
-                              : 'bg-gradient-to-r from-amber-100 to-amber-200 text-amber-800'
-                          }`}>
-                            {appointment.status === 'completed' ? 'Completed' : 
-                             appointment.status === 'in-progress' ? 'In Progress' : 'Scheduled'}
-                          </span>
-                        </td>
-                      </tr>
-                    ))
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </motion.div>
-          
+        <div className="grid grid-cols-1  gap-8">
           {/* Recent Payments */}
           <motion.div 
             className="bg-white rounded-2xl overflow-hidden"

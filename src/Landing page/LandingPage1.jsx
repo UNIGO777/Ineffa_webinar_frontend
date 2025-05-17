@@ -56,7 +56,11 @@ function LandingPage() {
   // State for consultation booking form
   const [currentStep, setCurrentStep] = useState(0)
   const [bookingData, setBookingData] = useState({})
-  const [selectedDate, setSelectedDate] = useState(new Date())
+  const [selectedDate, setSelectedDate] = useState(() => {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    return tomorrow;
+  })
   const [availableSlots, setAvailableSlots] = useState([])
   const [loadingSlots, setLoadingSlots] = useState(false)
   const [formError, setFormError] = useState('')
@@ -1061,17 +1065,32 @@ function LandingPage() {
                   {/* Date Picker */}
                   <div className="mb-6">
                     <label className="block text-sm font-medium text-gray-700 mb-2">Select Date</label>
-                    <input
-                      type="date"
-                      value={selectedDate}
-                      min={new Date().toISOString().split('T')[0]}
-                      onChange={(e) => {
-                        setSelectedDate(e.target.value);
-                        fetchAvailableSlots(e.target.value);
-                      }}
-                      
-                      className="w-full p-2 border border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500"
-                    />
+                    <div className='flex flex-col sm:flex-row justify-between items-center gap-2 sm:gap-4'>
+                      <div className="relative w-full sm:w-[80%]">
+                        <input
+                          type="date"
+                          value={selectedDate}
+                          min={(() => {
+                            const tomorrow = new Date();
+                            tomorrow.setDate(tomorrow.getDate() + 1);
+                            return tomorrow.toISOString().split('T')[0];
+                          })()}
+                          onChange={(e) => {
+                            setSelectedDate(e.target.value);
+                            fetchAvailableSlots(e.target.value);
+                          }}
+                          className="w-full p-2 border border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500 cursor-pointer"
+                        />
+                      </div>
+                      <div className='w-full sm:w-[18%] h-full'>
+                        <button 
+                          onClick={() => document.querySelector('input[type="date"]').showPicker()}
+                          className="w-full right-2 border-purple-700 border-2 text-purple-700 rounded-md p-2 sm:p-1 sm:px-8 hover:text-purple-500 focus:outline-none"
+                        >
+                          Select
+                        </button>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Time Slots */}

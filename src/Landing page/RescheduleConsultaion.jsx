@@ -190,16 +190,17 @@ const RescheduleConsultaion = () => {
     }
   };
 
-  // Minimum date for date picker (24 hours from now)
+  // Minimum date for date picker (8 hours from now)
   const minDate = addDays(new Date(), 1);
 
   // Render phone verification step
   const renderPhoneVerification = () => (
     
     <div className="bg-white  shadow-sm ">
-      <h1  className="text-md sm:text-2xl lg:text-5xl font-bold leading-tight mb-4 sm:mb-6">
+      <h1  className="text-md sm:text-2xl lg:text-5xl font-bold leading-tight mb-4 sm:mb-4">
               <span className="text-purple-600">Reshedule  </span> your consultation
             </h1>
+      <p className='bg-yellow-400/20 p-2 mb-4  text-yellow-500'>You  can only reshedule your consultation before 8 hour of your slot time</p>
       <h3 className="text-gray-500 text-center mb-6 text-lg"><span className='text-purple-600 font-bold'> Step 1: </span>Verify Your Phone Number </h3>
       
       {alert.show && (
@@ -369,17 +370,29 @@ const RescheduleConsultaion = () => {
       )}
       
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-1">Select Date</label>
-        <DatePicker
-          selected={selectedDate}
-          onChange={handleDateChange}
-          minDate={minDate}
-          dateFormat="MMMM d, yyyy"
-          className="w-full px-3 py-2 border border-gray-300 rounded-sm focus:outline-none focus:ring-2 focus:ring-[#9333ea]"
-          placeholderText="Select a date"
-        />
+        <label className="block text-sm font-medium text-gray-700 mb-2">Select Date</label>
+        <div className='flex flex-col sm:flex-row justify-between items-center gap-3 sm:gap-0'>
+          <div className="relative w-full sm:w-[80%]">
+            <DatePicker
+              selected={selectedDate}
+              onChange={handleDateChange}
+              minDate={minDate}
+              dateFormat="MMMM d, yyyy"
+              className="w-[80vw] sm:w-[20vw] p-2 border border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500 cursor-pointer"
+              placeholderText="Select a date"
+            />
+          </div>
+          <div className='w-full sm:w-[18%] h-full'>
+            <button 
+              onClick={() => document.querySelector('.react-datepicker-wrapper input').click()}
+              className="w-full border-purple-700 border-2 text-purple-700 rounded-md p-1 px-4  hover:text-purple-500 focus:outline-none"
+            >
+              Select
+            </button>
+          </div>
+        </div>
         <p className="mt-1 text-sm text-gray-500">
-          You can only reschedule to dates that are at least 24 hours in the future.
+          You can only reschedule to dates that are at least 8 hours in the future.
         </p>
       </div>
       
@@ -496,7 +509,7 @@ const RescheduleConsultaion = () => {
     <div className="py-10 px-4 h-screen flex items-center justify-center">
       
       <div className=" mx-auto max-w-4xl">
-        <div className='w-full mb-10 '><img src={logoImg} className='m-auto opacity-70' alt="" /></div>
+        <div className='w-full mb-10 '><img src={logoImg} className='m-auto ' alt="" /></div>
         {renderStep()}
       </div>
     </div>

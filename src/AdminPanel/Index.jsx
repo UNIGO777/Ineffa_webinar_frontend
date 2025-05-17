@@ -13,25 +13,7 @@ import Notifications from './Pages/Notifications';
 
 
 // Component imports for routes
-const Dashboard = () => (
-  <div className="p-6 bg-gray-50 rounded-lg">
-    <h2 className="text-2xl font-bold mb-4">Dashboard Overview</h2>
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-700">Total Users</h3>
-        <p className="text-3xl font-bold text-blue-600">1,234</p>
-      </div>
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-700">Revenue</h3>
-        <p className="text-3xl font-bold text-green-600">$12,345</p>
-      </div>
-      <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-200">
-        <h3 className="text-lg font-semibold text-gray-700">Consultations</h3>
-        <p className="text-3xl font-bold text-purple-600">56</p>
-      </div>
-    </div>
-  </div>
-);
+
 
 // Using the new Payment component instead of this placeholder
 const Payments = Payment;
