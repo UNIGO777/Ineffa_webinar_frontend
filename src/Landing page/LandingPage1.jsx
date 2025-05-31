@@ -541,15 +541,12 @@ function LandingPage() {
                     name: bookingData.name,
                     service: bookingData.service || 'Consultation',
                     amount: '₹99',
-                    date: new Date().toLocaleDateString('en-IN', {
+                    date: bookingData.slotDate && new Date(bookingData.slotDate).toLocaleDateString('en-IN', {
                       year: 'numeric',
                       month: 'long',
                       day: 'numeric'
                     }),
-                    time: new Date().toLocaleTimeString('en-IN', {
-                      hour: '2-digit',
-                      minute: '2-digit'
-                    })
+                    time: `${bookingData.slotStartTime} - ${bookingData.slotEndTime}`
                   }
                 }
               });

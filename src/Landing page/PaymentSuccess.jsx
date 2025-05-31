@@ -20,15 +20,8 @@ const PaymentSuccess = () => {
     name: 'Valued Customer',
     service: 'Consultation',
     amount: '₹99',
-    date: new Date().toLocaleDateString('en-IN', {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric'
-    }),
-    time: new Date().toLocaleTimeString('en-IN', {
-      hour: '2-digit',
-      minute: '2-digit'
-    })
+    date: 'Please contact support',
+    time: 'Please contact support'
   };
 
   // Create confetti effect
