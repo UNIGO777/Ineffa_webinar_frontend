@@ -137,45 +137,45 @@ function LandingPage() {
         }, 100); // Small delay to ensure DOM is ready
       }
     };
-    
+
     // Check for hash on initial load
     scrollToContact();
-    
+
     // Add event listener for hash changes
     window.addEventListener('hashchange', scrollToContact);
-    
+
     // Check for redirect message
     const redirectMessage = localStorage.getItem('paymentRedirectMessage');
     if (redirectMessage) {
       setNotificationMessage(redirectMessage);
       setShowNotification(true);
-      
+
       // Remove the message from localStorage
       localStorage.removeItem('paymentRedirectMessage');
-      
+
       // Auto-hide notification after 5 seconds
       setTimeout(() => {
         setShowNotification(false);
       }, 5000);
     }
-    
+
     // Add Facebook Pixel tracking for the payment button
-    const handlePurchaseEvent = function() {
+    const handlePurchaseEvent = function () {
       if (window.fbq) {
-        fbq('track', 'Purchase', {currency: "USD", value: 30.00});
+        fbq('track', 'Purchase', { currency: "USD", value: 30.00 });
       }
     };
-    
-    
+
+
     const addToCartButton = document.getElementById('addToCartButton');
     if (addToCartButton) {
       addToCartButton.addEventListener('click', handlePurchaseEvent);
     }
-    
+
     // Clean up event listener on component unmount
     return () => {
       window.removeEventListener('hashchange', scrollToContact);
-      
+
       // Clean up Facebook Pixel event listener
       const addToCartButton = document.getElementById('addToCartButton');
       if (addToCartButton) {
@@ -183,12 +183,12 @@ function LandingPage() {
       }
     };
   }, []);
-  
+
   // Function to close notification
   const closeNotification = () => {
     setShowNotification(false);
   };
-  
+
   // Separate useEffect for animations to avoid early return
   useEffect(() => {
     // Animate the hero section when it comes into view
@@ -399,7 +399,7 @@ function LandingPage() {
       })
     }
   }, [])
-  
+
 
   // Fetch available slots for a given date
   const fetchAvailableSlots = async (date) => {
@@ -407,7 +407,7 @@ function LandingPage() {
       setLoadingSlots(true);
       setFormError('');
       const response = await slotService.getAvailableSlots(date);
-      
+
       // Filter out lunch time slots (13:00-14:00)
       const filteredSlots = (response.data.slots || []).filter(slot => {
         // Extract hour from slot time (format: HH:MM)
@@ -415,7 +415,7 @@ function LandingPage() {
         // Filter out slots that start at 13:00
         return hour !== 13;
       });
-      
+
       setAvailableSlots(filteredSlots);
     } catch (error) {
       console.error('Error fetching slots:', error);
@@ -482,7 +482,7 @@ function LandingPage() {
       setFormError('');
 
       // Initiate payment
-      const response = await publicPaymentService.initiatePayment(consultationId );
+      const response = await publicPaymentService.initiatePayment(consultationId);
 
       // Get Razorpay order details
       const { order, key_id } = response.data;
@@ -512,7 +512,7 @@ function LandingPage() {
               razorpay_signature: razorpayResponse.razorpay_signature,
               consultationId: consultationId
             });
-            
+
             if (verifyResponse.data) {
               // Payment verification successful
               // Prepare payment details to pass to success page
@@ -530,13 +530,13 @@ function LandingPage() {
                   minute: '2-digit'
                 })
               };
-              
+
               // Set payment verification flag in localStorage
               localStorage.setItem('paymentVerified', 'true');
-              
+
               // Redirect to success page with payment details
-              navigate('/payment-success', { 
-                state: { 
+              navigate('/payment-success', {
+                state: {
                   paymentDetails: {
                     name: bookingData.name,
                     service: bookingData.service || 'Consultation',
@@ -654,11 +654,11 @@ function LandingPage() {
           </div>
         </div>
       )}
-      
+
       {/* Success Popup */}
       {showSuccessPopup && (
         <div
-          className="fixed top-4 right-4 z-50 bg-white rounded-lg shadow-xl p-4 sm:p-6 max-w-sm w-full border-l-4 border-purple-600"
+          className="fixed top-4 right-4 z-50 bg-white rounded-lg shadow-xl p-4 sm:p-6 max-w-sm w-full border-l-4 border-black-600"
           style={{
             animation: 'slideIn 0.5s forwards',
             boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)'
@@ -666,14 +666,14 @@ function LandingPage() {
         >
           <div className="flex items-start">
             <div className="flex-shrink-0">
-              <CheckCircle className="h-6 w-6 text-purple-600" aria-hidden="true" />
+              <CheckCircle className="h-6 w-6 text-black/60" aria-hidden="true" />
             </div>
             <div className="ml-3 w-0 flex-1 pt-0.5">
               <p className="text-sm font-medium text-gray-900 text-left">{popupMessage}</p>
             </div>
             <div className="ml-4 flex-shrink-0 flex">
               <button
-                className="bg-white rounded-md inline-flex text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-purple-500"
+                className="bg-white rounded-md inline-flex text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-black-500"
                 onClick={() => setShowSuccessPopup(false)}
               >
                 <span className="sr-only">Close</span>
@@ -705,36 +705,37 @@ function LandingPage() {
           </div>
 
           {/* Hero Section */}
+          
           <section ref={heroRef} className="mt-2 sm:mt-20 text-center max-w-4xl mx-auto">
             <h1 ref={headingRef} className="text-md sm:text-2xl lg:text-5xl font-bold leading-tight mb-4 sm:mb-6">
-              <span className="text-purple-600">Struggling With UI/UX? </span> Get Expert Help in 30 Minutes.
+              Struggling With UI/UX? Get Expert Help in 30 Minutes.
             </h1>
             <p ref={subheadingRef} className="text-sm sm:text-xl text-gray-700 mb-2 sm:mb-10">
               Book a 1-on-1 consultation with our UI/UX experts to identify pain points and actionable solutions for your business.
             </p>
             <div className="flex justify-center mt-8">
-          <a
-            href="#contact"
-            className="inline-flex items-center justify-center px-6 py-3 bg-black/70 hover:bg-black text-white font-medium rounded-lg transition-colors duration-300 text-sm sm:text-base"
-            aria-label="Jump to contact form"
-          >
-            Book Consultation Now
-            <svg
-              className="ml-2  -mr-1 w-4 h-4"
-              fill="none"
-              stroke="currentColor"
-              viewBox="0 0 24 24"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                d="M19 14l-7 7m0 0l-7-7m7 7V3"
-              />
-            </svg>
-          </a>
-        </div>
+              <a
+                href="#contact"
+                className="inline-flex items-center justify-center px-6 py-3 bg-transparent border-2 border-black hover:bg-black text-black hover:text-white font-medium rounded-full transition-colors duration-300 text-sm sm:text-base"
+                aria-label="Jump to contact form"
+              >
+                Book Consultation Now
+                <svg
+                  className="ml-2  -mr-1 w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                  />
+                </svg>
+              </a>
+            </div>
           </section>
         </header>
 
@@ -774,45 +775,45 @@ function LandingPage() {
                 <h2 className="text-xl sm:text-3xl font-bold mb-4">Why Choose Us for Your UI/UX Consultation?</h2>
                 <p className="text-gray-600 max-w-2xl mx-auto">Helping businesses design seamless and user-friendly experiences that drive results.</p>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
                 {/* Feature 1 */}
                 <div className="bg-gray-50 p-6 rounded-xl hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-                  <div className="rounded-full bg-purple-100 w-12 h-12 flex items-center justify-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className="rounded-full bg-black/10 w-12 h-12 flex items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-black-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                   </div>
                   <h3 className="text-lg font-semibold mb-2">Dedicated Design Team</h3>
                   <p className="text-gray-600">A dedicated team with a passion for great design</p>
                 </div>
-                
+
                 {/* Feature 2 */}
                 <div className="bg-gray-50 p-6 rounded-xl hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-                  <div className="rounded-full bg-purple-100 w-12 h-12 flex items-center justify-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className="rounded-full bg-black/10 w-12 h-12 flex items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-black-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                     </svg>
                   </div>
                   <h3 className="text-lg font-semibold mb-2">Tailored Solutions</h3>
                   <p className="text-gray-600">Tailored recommendations based on your unique needs</p>
                 </div>
-                
+
                 {/* Feature 3 */}
                 <div className="bg-gray-50 p-6 rounded-xl hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-                  <div className="rounded-full bg-purple-100 w-12 h-12 flex items-center justify-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className="rounded-full bg-black/10 w-12 h-12 flex items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-black-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                     </svg>
                   </div>
                   <h3 className="text-lg font-semibold mb-2">Results-Driven</h3>
                   <p className="text-gray-600">Focus on improving user experience and conversion rates</p>
                 </div>
-                
+
                 {/* Feature 4 */}
                 <div className="bg-gray-50 p-6 rounded-xl hover:shadow-md transition-all duration-300 hover:-translate-y-1">
-                  <div className="rounded-full bg-purple-100 w-12 h-12 flex items-center justify-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <div className="rounded-full bg-black/10 w-12 h-12 flex items-center justify-center mb-4">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-black-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
@@ -820,11 +821,11 @@ function LandingPage() {
                   <p className="text-gray-600">Affordable pricing for expert-level service</p>
                 </div>
               </div>
-              
+
               <div className="mt-10 text-center">
                 <a
                   href="#contact"
-                  className="inline-flex items-center justify-center px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors duration-300 text-sm sm:text-base"
+                  className="inline-flex items-center justify-center px-6 py-3 bg-black-600 text-black border-2 border-black hover:bg-black-700 hover:text-white font-medium rounded-full hover:bg-black transition-colors duration-300 text-sm sm:text-base"
                   aria-label="Start your consultation"
                 >
                   Start Your Consultation Today
@@ -854,49 +855,49 @@ function LandingPage() {
                 <h2 className="text-xl sm:text-3xl font-bold mb-4">What You'll Gain from This Consultation Call</h2>
                 <p className="text-gray-600 max-w-2xl mx-auto">During the 30-minute session, you'll receive personalized advice to improve your UI/UX and achieve better user engagement.</p>
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto">
                 {/* Benefit 1 */}
                 <div className="bg-gray-50 p-6 rounded-xl hover:shadow-md transition-all duration-300 hover:-translate-y-1">
                   <div className="flex items-start">
-                    <div className="rounded-full bg-purple-100 w-10 h-10 flex items-center justify-center mr-4 flex-shrink-0">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className="rounded-full bg-black/10 w-10 h-10 flex items-center justify-center mr-4 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-black-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
                     <p className="text-gray-700 font-medium">Review of your website/app's current UI/UX</p>
                   </div>
                 </div>
-                
+
                 {/* Benefit 2 */}
                 <div className="bg-gray-50 p-6 rounded-xl hover:shadow-md transition-all duration-300 hover:-translate-y-1">
                   <div className="flex items-start">
-                    <div className="rounded-full bg-purple-100 w-10 h-10 flex items-center justify-center mr-4 flex-shrink-0">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className="rounded-full bg-black/10 w-10 h-10 flex items-center justify-center mr-4 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-black-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
                     <p className="text-gray-700 font-medium">Actionable suggestions for enhancing design and user flow</p>
                   </div>
                 </div>
-                
+
                 {/* Benefit 3 */}
                 <div className="bg-gray-50 p-6 rounded-xl hover:shadow-md transition-all duration-300 hover:-translate-y-1">
                   <div className="flex items-start">
-                    <div className="rounded-full bg-purple-100 w-10 h-10 flex items-center justify-center mr-4 flex-shrink-0">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className="rounded-full bg-black/10 w-10 h-10 flex items-center justify-center mr-4 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-black-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
                     <p className="text-gray-700 font-medium">Tips for increasing conversions and user satisfaction</p>
                   </div>
                 </div>
-                
+
                 {/* Benefit 4 */}
                 <div className="bg-gray-50 p-6 rounded-xl hover:shadow-md transition-all duration-300 hover:-translate-y-1">
                   <div className="flex items-start">
-                    <div className="rounded-full bg-purple-100 w-10 h-10 flex items-center justify-center mr-4 flex-shrink-0">
-                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-purple-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <div className="rounded-full bg-black/10 w-10 h-10 flex items-center justify-center mr-4 flex-shrink-0">
+                      <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-black-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                     </div>
@@ -904,11 +905,12 @@ function LandingPage() {
                   </div>
                 </div>
               </div>
-              
+
               <div className="mt-10 text-center">
                 <a
                   href="#contact"
-                  className="inline-flex items-center justify-center px-6 py-3 bg-black/70 hover:bg-black text-white font-medium rounded-lg transition-colors duration-300 text-sm sm:text-base"
+                                      className="inline-flex items-center justify-center px-6 py-3  hover:bg-black rounded-full hover:bg-black-700 border-black border-2 hover:text-white font-medium transition-colors duration-300 text-sm sm:text-base"
+
                   aria-label="Book consultation session"
                 >
                   Book My Session Now
@@ -933,7 +935,7 @@ function LandingPage() {
 
           {/* Pricing & Limited Time Offer Section */}
           <section ref={pricingSectionRef} className="mt-12 sm:mt-20 mb-12 sm:mb-16 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="bg-gradient-to-br from-purple-50 to-purple-100 rounded-2xl overflow-hidden p-6 sm:p-10 text-center">
+            <div className="bg-gradient-to-br from-black-50 to-black-100 rounded-2xl overflow-hidden p-6 sm:p-10 text-center">
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -942,21 +944,21 @@ function LandingPage() {
               >
                 <h2 className="text-xl sm:text-3xl font-bold mb-4">Get a High-Impact Consultation for Just ₹99</h2>
                 <p className="text-gray-600 mb-8">
-                  Regular Price: <span className="line-through">₹1500</span> | Limited Offer: <span className="font-bold text-purple-600">₹99</span> for a 30-minute session. Offer valid until June 30, 2024.
+                  Regular Price: <span className="line-through">₹1500</span> | Limited Offer: <span className="font-bold text-black-600">₹99</span> for a 30-minute session. Offer valid until June 30, 2024.
                 </p>
-                
-                <div className="bg-white p-6 rounded-xl shadow-sm inline-block mb-8">
-                  <div className="flex flex-col items-center justify-center">
+
+                <div className="bg-white p-6 shadow-sm inline-block mb-8 bg-black/10">
+                  <div className="flex flex-col items-center justify-center ">
                     <span className="text-gray-500 line-through text-lg">₹1500</span>
-                    <span className="text-3xl sm:text-5xl font-bold text-purple-600 mt-2">₹99</span>
+                    <span className="text-3xl sm:text-5xl font-bold text-black mt-2">₹99</span>
                     <span className="text-gray-600 mt-2">30-minute expert consultation</span>
                   </div>
                 </div>
-                
+
                 <div>
                   <a
                     href="#contact"
-                    className="inline-flex items-center justify-center px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-lg transition-colors duration-300 text-sm sm:text-base"
+                    className="inline-flex items-center justify-center px-6 py-3  hover:bg-black rounded-full hover:bg-black-700 border-black border-2 hover:text-white font-medium transition-colors duration-300 text-sm sm:text-base"
                     aria-label="Claim limited time offer"
                   >
                     Claim My Offer Now
@@ -986,17 +988,17 @@ function LandingPage() {
             <p className="text-center text-gray-600 mb-8">Schedule a 30-minute consultation with our experts for just ₹99</p>
 
             {/* Multi-step Booking Form */}
-            <div className="bg-white rounded-xl shadow-sm p-6">
+            <div className="bg-white rounded-xl  p-6">
               {/* Progress Steps */}
               <div className="flex items-center justify-between mb-8">
                 {['Service', 'Schedule', 'Details', 'Payment'].map((step, index) => (
                   <div key={step} className="flex flex-col items-center">
                     <div
-                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${index < currentStep ? 'bg-purple-600 text-white' : index === currentStep ? 'bg-purple-100 text-purple-600 border-2 border-purple-600' : 'bg-gray-100 text-gray-400'}`}
+                      className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${index < currentStep ? 'bg-black/60 text-white' : index === currentStep ? 'bg-black/10 text-black-600 border-2 border-black-600' : 'bg-gray-100 text-gray-400'}`}
                     >
                       {index + 1}
                     </div>
-                    <span className={`mt-2 text-xs ${index === currentStep ? 'text-purple-600 font-medium' : 'text-gray-500'}`}>{step}</span>
+                    <span className={`mt-2 text-xs ${index === currentStep ? 'text-black/60 font-medium' : 'text-gray-500'}`}>{step}</span>
                   </div>
                 ))}
               </div>
@@ -1016,12 +1018,12 @@ function LandingPage() {
                       <div
                         key={service}
                         onClick={() => setBookingData({ ...bookingData, service })}
-                        className={`p-4 border rounded-lg cursor-pointer transition-all ${bookingData.service === service ? 'border-purple-600 bg-purple-50' : 'border-gray-200 hover:border-purple-300'}`}
+                        className={`p-4 border rounded-full cursor-pointer transition-all ${bookingData.service === service ? 'border-black-600 bg-black-50' : 'border-gray-200 hover:border-black-300'}`}
                       >
                         <div className="flex items-center">
-                          <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${bookingData.service === service ? 'border-purple-600' : 'border-gray-300'}`}>
+                          <div className={`w-5 h-5 rounded-full border flex items-center justify-center ${bookingData.service === service ? 'border-black-600' : 'border-gray-300'}`}>
                             {bookingData.service === service && (
-                              <div className="w-3 h-3 rounded-full bg-purple-600"></div>
+                              <div className="w-3 h-3 rounded-full bg-black/80"></div>
                             )}
                           </div>
                           <span className="ml-3 font-medium">{service}</span>
@@ -1041,7 +1043,7 @@ function LandingPage() {
                           setFormError('Please select a service to continue');
                         }
                       }}
-                      className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200"
+                      className="px-6 py-2 bg-black-600 text-black border-2 border-black rounded-full hover:bg-black hover:text-white hover:bg-black-700 transition-colors duration-200"
                     >
                       Continue
                     </button>
@@ -1076,13 +1078,13 @@ function LandingPage() {
                             setSelectedDate(e.target.value);
                             fetchAvailableSlots(e.target.value);
                           }}
-                          className="w-full p-2 border border-gray-300 rounded-md focus:ring-purple-500 focus:border-purple-500 cursor-pointer"
+                          className="w-full p-2 border border-gray-300 rounded-full focus:ring-black/50 focus:border-black-500 cursor-pointer"
                         />
                       </div>
                       <div className='w-full sm:w-[18%] h-full'>
-                        <button 
+                        <button
                           onClick={() => document.querySelector('input[type="date"]').showPicker()}
-                          className="w-full right-2 border-purple-700 border-2 text-purple-700 rounded-md p-2 sm:p-1 sm:px-8 hover:text-purple-500 focus:outline-none"
+                          className="w-full right-2 border-black/70 border-2 text-black/70 rounded-full p-2 sm:p-2 sm:px-8 hover:text-black-500 focus:outline-none"
                         >
                           Select
                         </button>
@@ -1096,7 +1098,7 @@ function LandingPage() {
 
                     {loadingSlots ? (
                       <div className="flex justify-center py-8">
-                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-purple-600"></div>
+                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-black-600"></div>
                       </div>
                     ) : availableSlots.length > 0 ? (
                       <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
@@ -1109,7 +1111,7 @@ function LandingPage() {
                               slotStartTime: slot.startTime,
                               slotEndTime: slot.endTime
                             })}
-                            className={`p-2 border rounded text-center cursor-pointer ${!slot.isAvailable ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : bookingData.slotStartTime === slot.startTime ? 'border-purple-600 bg-purple-50 text-purple-700' : 'hover:border-purple-300'}`}
+                            className={`p-2 border rounded text-center cursor-pointer ${!slot.isAvailable ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : bookingData.slotStartTime === slot.startTime ? 'border-black-600 bg-black-50 text-black-700' : 'hover:border-black-300'}`}
                           >
                             {slot.startTime} - {slot.endTime}
                           </div>
@@ -1135,7 +1137,7 @@ function LandingPage() {
                           setFormError('Please select a time slot to continue');
                         }
                       }}
-                      className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200"
+                      className="px-6 py-2 bg-black-600 text-white rounded-lg hover:bg-black-700 transition-colors duration-200"
                     >
                       Continue
                     </button>
@@ -1156,7 +1158,7 @@ function LandingPage() {
                   {/* Name Field */}
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
-                      Full Name <span className="text-purple-600">*</span>
+                      Full Name <span className="text-black-600">*</span>
                     </label>
                     <input
                       type="text"
@@ -1165,14 +1167,14 @@ function LandingPage() {
                       onChange={(e) => setBookingData({ ...bookingData, name: e.target.value })}
                       placeholder="Enter your full name"
                       required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black-500 focus:border-black-500"
                     />
                   </div>
 
                   {/* Email Field */}
                   <div>
                     <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-1">
-                      Email Address <span className="text-purple-600">*</span>
+                      Email Address <span className="text-black-600">*</span>
                     </label>
                     <input
                       type="email"
@@ -1181,14 +1183,14 @@ function LandingPage() {
                       onChange={(e) => setBookingData({ ...bookingData, email: e.target.value })}
                       placeholder="you@example.com"
                       required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black-500 focus:border-black-500"
                     />
                   </div>
 
                   {/* Phone Field */}
                   <div>
                     <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">
-                      Phone Number <span className="text-purple-600">*</span>
+                      Phone Number <span className="text-black-600">*</span>
                     </label>
                     <input
                       type="tel"
@@ -1197,14 +1199,14 @@ function LandingPage() {
                       onChange={(e) => setBookingData({ ...bookingData, phone: e.target.value })}
                       placeholder="Your phone number"
                       required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black-500 focus:border-black-500"
                     />
                   </div>
 
                   {/* Message Field */}
                   <div>
                     <label htmlFor="message" className="block text-sm font-medium text-gray-700 mb-1">
-                      Message <span className="text-purple-600">*</span>
+                      Message <span className="text-black-600">*</span>
                     </label>
                     <textarea
                       id="message"
@@ -1213,7 +1215,7 @@ function LandingPage() {
                       placeholder="Tell us about your project or questions"
                       rows="3"
                       required
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-black-500 focus:border-black-500"
                     ></textarea>
                   </div>
 
@@ -1230,7 +1232,7 @@ function LandingPage() {
                           handleCreateConsultation();
                         }
                       }}
-                      className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200"
+                      className="px-6 py-2 bg-black-600 text-white rounded-lg hover:bg-black-700 transition-colors duration-200"
                     >
                       Continue to Payment
                     </button>
@@ -1265,14 +1267,14 @@ function LandingPage() {
                       </div>
                       <div className="flex justify-between pt-2 border-t border-gray-200 mt-2">
                         <span className="text-gray-800 font-medium">Total Amount:</span>
-                        <span className="font-bold text-purple-600">₹99</span>
+                        <span className="font-bold text-black-600">₹99</span>
                       </div>
                     </div>
                   </div>
 
                   {paymentLoading ? (
                     <div className="flex flex-col items-center justify-center py-4">
-                      <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-purple-600 mb-3"></div>
+                      <div className="animate-spin rounded-full h-10 w-10 border-b-2 border-black-600 mb-3"></div>
                       <p className="text-gray-600">Initializing payment...</p>
                     </div>
                   ) : (
@@ -1286,7 +1288,7 @@ function LandingPage() {
                       <button
                         id="addToCartButton"
                         onClick={handlePayment}
-                        className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200 flex items-center"
+                        className="px-6 py-2 bg-black-600 text-white rounded-lg hover:bg-black-700 transition-colors duration-200 flex items-center"
                       >
                         <span className="mr-2">Pay ₹99</span>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1318,7 +1320,7 @@ function LandingPage() {
                       setBookingData({});
                       setSelectedDate(new Date().toISOString().split('T')[0]);
                     }}
-                    className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors duration-200"
+                    className="px-6 py-2 bg-black-600 text-white rounded-lg hover:bg-black-700 transition-colors duration-200"
                   >
                     Book Another Consultation
                   </button>
@@ -1327,13 +1329,13 @@ function LandingPage() {
 
               {/* Error Message */}
               {formError && (
-                <div className="mt-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-md text-sm">
+                <div className="mt-4 p-3 bg-red-50 border border-red-200 text-red-600 rounded-full text-sm">
                   {formError}
                 </div>
               )}
             </div>
           </section>
-         
+
 
           {/* Portfolio Section - Full Width */}
           <section ref={portfolioSectionRef} className="w-full bg-[#0e172d] sm:bg-white py-5 md:py-6 lg:py-12">
@@ -1414,7 +1416,8 @@ function LandingPage() {
           <div className="flex justify-center mt-8">
             <a
               href="#contact"
-              className="inline-flex items-center justify-center px-6 py-3 bg-black/70 hover:bg-black text-white font-medium rounded-lg transition-colors duration-300 text-sm sm:text-base"
+                                  className="inline-flex items-center justify-center px-6 py-3  hover:bg-black rounded-full hover:bg-black-700 border-black border-2 hover:text-white font-medium transition-colors duration-300 text-sm sm:text-base"
+
               aria-label="Jump to contact form"
             >
               Get Started
@@ -1470,8 +1473,8 @@ function LandingPage() {
                       </div>
 
                       <div className="flex items-center ">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-purple-100 flex items-center justify-center mr-3 sm:mr-4">
-                          <span className="text-purple-600 font-bold text-sm sm:text-base">{testimonial.name.charAt(0)}</span>
+                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/10 flex items-center justify-center mr-3 sm:mr-4">
+                          <span className="text-black-600 font-bold text-sm sm:text-base">{testimonial.name.charAt(0)}</span>
                         </div>
                         <div>
                           <h4 className="font-bold text-sm sm:text-base">{testimonial.name}</h4>
@@ -1491,7 +1494,8 @@ function LandingPage() {
         <div className="flex justify-center mt-8">
           <a
             href="#contact"
-            className="inline-flex items-center justify-center px-6 py-3 bg-black/70 hover:bg-black text-white font-medium rounded-lg transition-colors duration-300 text-sm sm:text-base"
+                                className="inline-flex items-center justify-center px-6 py-3  hover:bg-black rounded-full hover:bg-black-700 border-black border-2 hover:text-white font-medium transition-colors duration-300 text-sm sm:text-base"
+
             aria-label="Jump to contact form"
           >
             Get Started
@@ -1545,7 +1549,7 @@ function LandingPage() {
               <input
                 type="text"
                 placeholder="Enter your keyword"
-                className="w-full px-10 sm:px-12 py-3 sm:py-4 rounded-md border border-gray-300 focus:outline-none focus:ring-2 focus:ring-purple-600 focus:border-transparent text-sm sm:text-base"
+                className="w-full px-10 sm:px-12 py-3 sm:py-4 rounded-full border border-gray-300 focus:outline-none focus:ring-2 focus:ring-black-600 focus:border-transparent text-sm sm:text-base"
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               <div className="absolute left-3 sm:left-4 top-1/2 transform -translate-y-1/2">
@@ -1566,7 +1570,7 @@ function LandingPage() {
               <div
                 key={index}
                 ref={(el) => faqItemsRef.current[index] = el}
-                className="border border-gray-200 rounded-lg overflow-hidden"
+                className="border border-gray-200  overflow-hidden"
               >
                 <button
                   className="flex justify-between items-center w-full px-4 sm:px-6 py-3 sm:py-4 text-left bg-white hover:bg-gray-50 transition-colors duration-200 text-sm sm:text-base"
