@@ -58,8 +58,8 @@ function LandingPage() {
   const [bookingData, setBookingData] = useState({})
   const [selectedDate, setSelectedDate] = useState(() => {
     const tomorrow = new Date();
-    tomorrow.setDate(tomorrow.getDate() + 1);
-    return tomorrow;
+    tomorrow.setDate(tomorrow.getDate() + 2);
+    return tomorrow.toISOString().split('T')[0]; // Convert to YYYY-MM-DD format
   })
   const [availableSlots, setAvailableSlots] = useState([])
   const [loadingSlots, setLoadingSlots] = useState(false)
@@ -707,10 +707,10 @@ function LandingPage() {
           {/* Hero Section */}
           
           <section ref={heroRef} className="mt-2 sm:mt-20 text-center max-w-4xl mx-auto">
-            <h1 ref={headingRef} className="text-md sm:text-2xl lg:text-5xl font-bold leading-tight mb-4 sm:mb-6">
+            <h1 ref={headingRef} className="text-2xl sm:text-2xl lg:text-5xl font-bold leading-tight mb-4 sm:mb-6">
               Struggling With UI/UX? Get Expert Help in 30 Minutes.
             </h1>
-            <p ref={subheadingRef} className="text-sm sm:text-xl text-gray-700 mb-2 sm:mb-10">
+            <p ref={subheadingRef} className="text-base sm:text-xl text-gray-700 mb-2 sm:mb-10">
               Book a 1-on-1 consultation with our UI/UX experts to identify pain points and actionable solutions for your business.
             </p>
             <div className="flex justify-center mt-8">
@@ -772,53 +772,53 @@ function LandingPage() {
           <section ref={whyChooseUsRef} className="mt-12 sm:mt-24 mb-12 sm:mb-16 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="bg-white rounded-2xl overflow-hidden  p-6 sm:p-10">
               <div className="text-center mb-10">
-                <h2 className="text-xl sm:text-3xl font-bold mb-4">Why Choose Us for Your UI/UX Consultation?</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold mb-4">Why Choose Us for Your UI/UX Consultation?</h2>
                 <p className="text-gray-600 max-w-2xl mx-auto">Helping businesses design seamless and user-friendly experiences that drive results.</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
                 {/* Feature 1 */}
-                <div className="bg-gray-50 p-6 rounded-xl hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+                <div className="bg-gray-50 p-6 rounded-xl hover:shadow-md transition-all duration-300 hover:-translate-y-1 flex flex-col items-center justify-center">
                   <div className="rounded-full bg-black/10 w-12 h-12 flex items-center justify-center mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-black-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                     </svg>
                   </div>
-                  <h3 className="text-lg font-semibold mb-2">Dedicated Design Team</h3>
-                  <p className="text-gray-600">A dedicated team with a passion for great design</p>
+                  <h3 className="text-xl font-semibold mb-2">Dedicated Design Team</h3>
+                  <p className="text-base text-gray-600">A dedicated team with a passion for great design</p>
                 </div>
 
                 {/* Feature 2 */}
-                <div className="bg-gray-50 p-6 rounded-xl hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+                <div className="bg-gray-50 p-6 rounded-xl hover:shadow-md transition-all duration-300 hover:-translate-y-1 flex flex-col items-center justify-center">
                   <div className="rounded-full bg-black/10 w-12 h-12 flex items-center justify-center mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-black-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
                     </svg>
                   </div>
-                  <h3 className="text-lg font-semibold mb-2">Tailored Solutions</h3>
-                  <p className="text-gray-600">Tailored recommendations based on your unique needs</p>
+                  <h3 className="text-xl font-semibold mb-2">Tailored Solutions</h3>
+                  <p className="text-base text-gray-600">Tailored recommendations based on your unique needs</p>
                 </div>
 
                 {/* Feature 3 */}
-                <div className="bg-gray-50 p-6 rounded-xl hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+                <div className="bg-gray-50 p-6 rounded-xl hover:shadow-md transition-all duration-300 hover:-translate-y-1 flex flex-col items-center justify-center">
                   <div className="rounded-full bg-black/10 w-12 h-12 flex items-center justify-center mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-black-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
                     </svg>
                   </div>
-                  <h3 className="text-lg font-semibold mb-2">Results-Driven</h3>
-                  <p className="text-gray-600">Focus on improving user experience and conversion rates</p>
+                  <h3 className="text-xl font-semibold mb-2">Results-Driven</h3>
+                  <p className="text-base text-gray-600">Focus on improving user experience and conversion rates</p>
                 </div>
 
                 {/* Feature 4 */}
-                <div className="bg-gray-50 p-6 rounded-xl hover:shadow-md transition-all duration-300 hover:-translate-y-1">
+                <div className="bg-gray-50 p-6 rounded-xl hover:shadow-md transition-all duration-300 hover:-translate-y-1 flex flex-col items-center justify-center">
                   <div className="rounded-full bg-black/10 w-12 h-12 flex items-center justify-center mb-4">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-black-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                     </svg>
                   </div>
-                  <h3 className="text-lg font-semibold mb-2">Affordable Pricing</h3>
-                  <p className="text-gray-600">Affordable pricing for expert-level service</p>
+                  <h3 className="text-xl font-semibold mb-2">Affordable Pricing</h3>
+                  <p className="text-base text-gray-600">Affordable pricing for expert-level service</p>
                 </div>
               </div>
 
@@ -852,8 +852,8 @@ function LandingPage() {
           <section ref={servicesOverviewRef} className="mt-12 sm:mt-0 mb-12 sm:mb-16 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="bg-white rounded-2xl overflow-hidden p-6 sm:p-10">
               <div className="text-center mb-10">
-                <h2 className="text-xl sm:text-3xl font-bold mb-4">What You'll Gain from This Consultation Call</h2>
-                <p className="text-gray-600 max-w-2xl mx-auto">During the 30-minute session, you'll receive personalized advice to improve your UI/UX and achieve better user engagement.</p>
+                <h2 className="text-2xl sm:text-3xl font-bold mb-4">What You'll Gain from This Consultation Call</h2>
+                <p className="text-base text-gray-600 max-w-2xl mx-auto">During the 30-minute session, you'll receive personalized advice to improve your UI/UX and achieve better user engagement.</p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8 max-w-4xl mx-auto">
@@ -909,7 +909,7 @@ function LandingPage() {
               <div className="mt-10 text-center">
                 <a
                   href="#contact"
-                                      className="inline-flex items-center justify-center px-6 py-3  hover:bg-black rounded-full hover:bg-black-700 border-black border-2 hover:text-white font-medium transition-colors duration-300 text-sm sm:text-base"
+                                      className="inline-flex items-center justify-center px-6 py-3  hover:bg-black rounded-full hover:bg-black-700 border-black border-2 hover:text-white font-medium transition-colors duration-300 text-base sm:text-base"
 
                   aria-label="Book consultation session"
                 >
@@ -942,12 +942,12 @@ function LandingPage() {
                 transition={{ duration: 0.7 }}
                 className="max-w-3xl mx-auto"
               >
-                <h2 className="text-xl sm:text-3xl font-bold mb-4">Get a High-Impact Consultation for Just ₹99</h2>
+                <h2 className="text-2xl sm:text-3xl font-bold mb-4">Get a High-Impact Consultation for Just ₹99</h2>
                 <p className="text-gray-600 mb-8">
                   Regular Price: <span className="line-through">₹1500</span> | Limited Offer: <span className="font-bold text-black-600">₹99</span> for a 30-minute session. Offer valid until June 30, 2024.
                 </p>
 
-                <div className="bg-white p-6 shadow-sm inline-block mb-8 bg-black/10">
+                <div className="rounded-md p-6 shadow-sm inline-block mb-8 bg-black/10">
                   <div className="flex flex-col items-center justify-center ">
                     <span className="text-gray-500 line-through text-lg">₹1500</span>
                     <span className="text-3xl sm:text-5xl font-bold text-black mt-2">₹99</span>
@@ -958,7 +958,7 @@ function LandingPage() {
                 <div>
                   <a
                     href="#contact"
-                    className="inline-flex items-center justify-center px-6 py-3  hover:bg-black rounded-full hover:bg-black-700 border-black border-2 hover:text-white font-medium transition-colors duration-300 text-sm sm:text-base"
+                    className="inline-flex items-center justify-center px-6 py-3  hover:bg-black rounded-full hover:bg-black-700 border-black border-2 hover:text-white font-medium transition-colors duration-300 text-base sm:text-base"
                     aria-label="Claim limited time offer"
                   >
                     Claim My Offer Now
@@ -984,8 +984,8 @@ function LandingPage() {
 
           {/* Consultation Booking Form Section */}
           <section ref={formSectionRef} id="contact" className="mt-2 sm:mt-24 mb-5 sm:mb-16 max-w-3xl mx-auto px-4">
-            <h2 className="text-xl sm:text-4xl font-bold text-center mb-8 sm:mb-12">Book a Consultation</h2>
-            <p className="text-center text-gray-600 mb-8">Schedule a 30-minute consultation with our experts for just ₹99</p>
+            <h2 className="text-2xl sm:text-4xl font-bold text-center mb-4 sm:mb-6">Book a Consultation</h2>
+            <p className="text-base text-center text-gray-600 mb-8">Schedule a 30-minute consultation with our experts for just ₹99</p>
 
             {/* Multi-step Booking Form */}
             <div className="bg-white rounded-xl  p-6">
@@ -1011,7 +1011,7 @@ function LandingPage() {
                   exit={{ opacity: 0, x: -20 }}
                   className="space-y-6"
                 >
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Select a Service</h3>
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4">Select a Service</h3>
 
                   <div className="space-y-3">
                     {['UX/UI Consultation', 'App Design Review', 'Website Audit'].map((service) => (
@@ -1032,7 +1032,7 @@ function LandingPage() {
                     ))}
                   </div>
 
-                  <div className="pt-4 flex justify-end">
+                  <div className="pt-4 flex justify-end ">
                     <button
                       onClick={() => {
                         if (bookingData.service) {
@@ -1043,7 +1043,7 @@ function LandingPage() {
                           setFormError('Please select a service to continue');
                         }
                       }}
-                      className="px-6 py-2 bg-black-600 text-black border-2 border-black rounded-full hover:bg-black hover:text-white hover:bg-black-700 transition-colors duration-200"
+                      className="px-6 py-2 bg-black-600 text-black border-2 w-full border-black rounded-full hover:bg-black hover:text-white hover:bg-black-700 transition-colors duration-200"
                     >
                       Continue
                     </button>
@@ -1059,7 +1059,7 @@ function LandingPage() {
                   exit={{ opacity: 0, x: -20 }}
                   className="space-y-6"
                 >
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Select Date & Time</h3>
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4">Select Date & Time</h3>
 
                   {/* Date Picker */}
                   <div className="mb-6">
@@ -1071,7 +1071,7 @@ function LandingPage() {
                           value={selectedDate}
                           min={(() => {
                             const tomorrow = new Date();
-                            tomorrow.setDate(tomorrow.getDate() + 1);
+                            tomorrow.setDate(tomorrow.getDate() + 2);
                             return tomorrow.toISOString().split('T')[0];
                           })()}
                           onChange={(e) => {
@@ -1111,7 +1111,7 @@ function LandingPage() {
                               slotStartTime: slot.startTime,
                               slotEndTime: slot.endTime
                             })}
-                            className={`p-2 border rounded text-center cursor-pointer ${!slot.isAvailable ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : bookingData.slotStartTime === slot.startTime ? 'border-black-600 bg-black-50 text-black-700' : 'hover:border-black-300'}`}
+                            className={`p-2 border rounded text-center cursor-pointer ${!slot.isAvailable ? 'bg-gray-100 text-gray-400 cursor-not-allowed' : bookingData.slotStartTime === slot.startTime ? 'border-black-600 bg-black/10 text-black-700' : 'hover:border-black-300'}`}
                           >
                             {slot.startTime} - {slot.endTime}
                           </div>
@@ -1125,7 +1125,7 @@ function LandingPage() {
                   <div className="pt-4 flex justify-between">
                     <button
                       onClick={() => setCurrentStep(0)}
-                      className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors duration-200"
+                      className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50  transition-colors duration-200"
                     >
                       Back
                     </button>
@@ -1137,7 +1137,7 @@ function LandingPage() {
                           setFormError('Please select a time slot to continue');
                         }
                       }}
-                      className="px-6 py-2 bg-black-600 text-white rounded-lg hover:bg-black-700 transition-colors duration-200"
+                      className="px-6 py-2 border-2 border-black hover:bg-black hover hover:text-white text-black rounded-lg hover:bg-black-700 transition-colors duration-200"
                     >
                       Continue
                     </button>
@@ -1153,7 +1153,7 @@ function LandingPage() {
                   exit={{ opacity: 0, x: -20 }}
                   className="space-y-4"
                 >
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Your Details</h3>
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4">Your Details</h3>
 
                   {/* Name Field */}
                   <div>
@@ -1232,7 +1232,7 @@ function LandingPage() {
                           handleCreateConsultation();
                         }
                       }}
-                      className="px-6 py-2 bg-black-600 text-white rounded-lg hover:bg-black-700 transition-colors duration-200"
+                      className="px-6 py-2 border-2 border-black hover:bg-black hover hover:text-white text-black rounded-lg hover:bg-black-700 transition-colors duration-200"
                     >
                       Continue to Payment
                     </button>
@@ -1248,7 +1248,7 @@ function LandingPage() {
                   exit={{ opacity: 0, x: -20 }}
                   className="space-y-6"
                 >
-                  <h3 className="text-lg font-semibold text-gray-800 mb-4">Payment</h3>
+                  <h3 className="text-xl font-semibold text-gray-800 mb-4">Payment</h3>
 
                   <div className="bg-gray-50 p-4 rounded-lg">
                     <h4 className="font-medium text-gray-800 mb-2">Booking Summary</h4>
@@ -1288,7 +1288,7 @@ function LandingPage() {
                       <button
                         id="addToCartButton"
                         onClick={handlePayment}
-                        className="px-6 py-2 bg-black-600 text-white rounded-lg hover:bg-black-700 transition-colors duration-200 flex items-center"
+                        className="px-6 py-2 border-2 border-black hover:bg-black hover hover:text-white text-black rounded-lg hover:bg-black-700 transition-colors duration-200 flex items-center"
                       >
                         <span className="mr-2">Pay ₹99</span>
                         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -1311,7 +1311,7 @@ function LandingPage() {
                   <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <CheckCircle size={32} className="text-green-600" />
                   </div>
-                  <h3 className="text-xl font-bold text-gray-800 mb-2">Booking Confirmed!</h3>
+                  <h3 className="text-2xl font-bold text-gray-800 mb-2">Booking Confirmed!</h3>
                   <p className="text-gray-600 mb-6">Your consultation has been successfully booked. We've sent the details to your email.</p>
                   <button
                     onClick={() => {
@@ -1340,7 +1340,7 @@ function LandingPage() {
           {/* Portfolio Section - Full Width */}
           <section ref={portfolioSectionRef} className="w-full bg-[#0e172d] sm:bg-white py-5 md:py-6 lg:py-12">
             <div className="mx-auto px-4 sm:px-6">
-              <h2 className="text-md sm:text-3xl md:text-4xl text-white sm:text-black font-bold text-center mb-6 sm:mb-8 md:mb-12">Our portfolio showcases a diverse<br className="hidden sm:block" /> range of successful projects</h2>
+              <h2 className="text-2xl sm:text-3xl md:text-4xl text-white sm:text-black font-bold text-center mb-6 sm:mb-8 md:mb-12">Our portfolio showcases a diverse<br className="hidden sm:block" /> range of successful projects</h2>
 
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                 {/* Portfolio cards with responsive text and spacing */}
@@ -1353,8 +1353,8 @@ function LandingPage() {
                     <div className="flex items-center mb-2 sm:mb-3">
                       <img src={figmaLogo} alt="Designed with Figma" className="h-5 sm:h-6 mr-2" loading="lazy" />
                     </div>
-                    <h3 className="text-sm sm:text-lg md:text-xl font-bold mb-2 text-start">Mobile Application Design</h3>
-                    <p className="text-xs sm:text-sm opacity-80 mb-3 text-start">
+                    <h3 className="text-xl sm:text-lg md:text-xl font-bold mb-2 text-start">Mobile Application Design</h3>
+                    <p className="text-base sm:text-sm opacity-80 mb-3 text-start">
                       Intuitive and secure, our mobile wallet helps users track expenses, manage budgets, and make in-app payments. Our design prioritizes simplicity and transparency for a frictionless experience.
                     </p>
                   </div>
@@ -1369,8 +1369,8 @@ function LandingPage() {
                     <div className="flex items-center mb-2 sm:mb-3">
                       <img src={figmaLogo} alt="Designed with Figma" className="h-5 sm:h-6 mr-2" loading="lazy" />
                     </div>
-                    <h3 className="text-sm sm:text-lg md:text-xl font-bold mb-2 text-start">Responsive Product Design</h3>
-                    <p className="text-xs sm:text-sm text-gray-600 mb-3 text-start">
+                    <h3 className="text-xl sm:text-lg md:text-xl font-bold mb-2 text-start">Responsive Product Design</h3>
+                    <p className="text-base sm:text-sm text-gray-600 mb-3 text-start">
                       Our file utility app design, inspired by industry leaders like Notion, enables seamless organization, collaboration, and file management. With a user-centric approach, our design simplifies complex workflows for maximum customer satisfaction.
                     </p>
                   </div>
@@ -1385,8 +1385,8 @@ function LandingPage() {
                     <div className="flex items-center mb-2 sm:mb-3">
                       <img src={stach} alt="Designed with Sketch" className="h-5 sm:h-6 mr-2" loading="lazy" />
                     </div>
-                    <h3 className="text-sm sm:text-lg md:text-xl font-bold mb-2 text-start">Mobile Application Design</h3>
-                    <p className="text-xs sm:text-sm opacity-80 mb-3 text-start">
+                    <h3 className="text-xl sm:text-lg md:text-xl font-bold mb-2 text-start">Mobile Application Design</h3>
+                    <p className="text-base sm:text-sm opacity-80 mb-3 text-start">
                       Our UPI app design provides an intuitive and secure platform for instant transactions, bill payments, and money transfers. With a focus on simplicity and speed, our design creates a frictionless experience for adoption and retention.
                     </p>
                   </div>
@@ -1402,8 +1402,8 @@ function LandingPage() {
                       <img src={micro} alt="Designed with Miro" className="h-5 sm:h-6 mr-2" loading="lazy" />
                       <img src={figmaLogo} alt="Designed with Figma" className="h-5 sm:h-6 mr-2" loading="lazy" />
                     </div>
-                    <h3 className="text-sm sm:text-lg md:text-xl font-bold mb-2 text-start">Website Design</h3>
-                    <p className="text-xs sm:text-sm text-gray-600 mb-3 text-start">
+                    <h3 className="text-xl sm:text-lg md:text-xl font-bold mb-2 text-start">Website Design</h3>
+                    <p className="text-base sm:text-sm text-gray-600 mb-3 text-start">
                       Our UPI app design provides an intuitive and secure platform for instant transactions, bill payments, and money transfers. With a focus on simplicity and speed, our design creates a frictionless experience for adoption and retention.
                     </p>
                   </div>
@@ -1416,11 +1416,11 @@ function LandingPage() {
           <div className="flex justify-center mt-8">
             <a
               href="#contact"
-                                  className="inline-flex items-center justify-center px-6 py-3  hover:bg-black rounded-full hover:bg-black-700 border-black border-2 hover:text-white font-medium transition-colors duration-300 text-sm sm:text-base"
+                                  className="inline-flex items-center justify-center px-6 py-3  hover:bg-black rounded-full hover:bg-black-700 border-black border-2 hover:text-white font-medium transition-colors duration-300 text-base sm:text-base"
 
               aria-label="Jump to contact form"
             >
-              Get Started
+              Book Consultation today
               <svg
                 className="ml-2 rotate-180 -mr-1 w-4 h-4"
                 fill="none"
@@ -1441,7 +1441,7 @@ function LandingPage() {
           {/* Testimonials Section */}
           <section ref={testimonialSectionRef} className="mt-16 sm:mt-24 mb-12 sm:mb-16 max-w-5xl mx-auto px-4" aria-label="Testimonials"></section>
 
-          <h2 className="text-xl sm:text-4xl font-bold text-center mb-8 px-2 sm:mb-12">See what our clients say</h2>
+          <h2 className="text-2xl sm:text-4xl font-bold text-center mb-4 sm:mb-6 px-2 ">See what our clients say</h2>
 
           <Swiper
             spaceBetween={30}
@@ -1454,31 +1454,29 @@ function LandingPage() {
               clickable: true,
               dynamicBullets: true,
             }}
-            navigation={true}
+            navigation={false}
             modules={[Autoplay, Pagination, Navigation]}
-            className="testimonial-swiper "
+            className="testimonial-swiper"
             aria-label="Client testimonials carousel"
           >
             {testimonials.map((testimonial) => (
-              <SwiperSlide key={testimonial.id} className='py-5'>
-                <div className="bg-white rounded-xl  overflow-hidden p-4 sm:p-8">
+              <SwiperSlide key={testimonial.id} className='pb-8'>
+                <div className="bg-white rounded-xl  overflow-hidden px-4 sm:px-8">
                   <div className="flex flex-col md:flex-row gap-4 sm:gap-8 items-center justify-center">
                     <div className="w-full md:w-3/4 bg-gray-50 h-[220px] sm:h-auto rounded-xl p-4 sm:p-6 shadow-sm">
                       <div className="mb-4 sm:mb-6">
-                        <span className="text-3xl sm:text-5xl text-gray-300 font-serif leading-none" aria-hidden="true">&ldquo;</span>
-                        <p className="text-sm sm:text-xl text-gray-700 italic">
+                        
+                        <p className="text-base sm:text-xl text-gray-700 italic">
                           {testimonial.quote}
                         </p>
-                        <span className="text-3xl sm:text-5xl text-gray-300 font-serif leading-none" aria-hidden="true">&rdquo;</span>
+                        
                       </div>
 
-                      <div className="flex items-center ">
-                        <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-black/10 flex items-center justify-center mr-3 sm:mr-4">
-                          <span className="text-black-600 font-bold text-sm sm:text-base">{testimonial.name.charAt(0)}</span>
-                        </div>
-                        <div>
-                          <h4 className="font-bold text-sm sm:text-base">{testimonial.name}</h4>
-                          <p className="text-xs sm:text-sm text-gray-600">{testimonial.company}</p>
+                      <div className="flex items-center justify-center">
+                        
+                        <div >
+                          <h4 className="font-bold text-base sm:text-base">{testimonial.name}</h4>
+                          <p className="text-base sm:text-sm text-gray-600">{testimonial.company}</p>
                         </div>
                       </div>
                     </div>
@@ -1494,11 +1492,11 @@ function LandingPage() {
         <div className="flex justify-center mt-8">
           <a
             href="#contact"
-                                className="inline-flex items-center justify-center px-6 py-3  hover:bg-black rounded-full hover:bg-black-700 border-black border-2 hover:text-white font-medium transition-colors duration-300 text-sm sm:text-base"
+                                className="inline-flex items-center justify-center px-6 py-3  hover:bg-black rounded-full hover:bg-black-700 border-black border-2 hover:text-white font-medium transition-colors duration-300 text-base sm:text-base"
 
             aria-label="Jump to contact form"
           >
-            Get Started
+            Book Consultation today
             <svg
               className="ml-2 rotate-180 -mr-1 w-4 h-4"
               fill="none"
@@ -1525,7 +1523,7 @@ function LandingPage() {
 
             <svg
               xmlns="http://www.w3.org/2000/svg"
-              width="20"
+              width="20" 
               height="30"
               viewBox="0 0 24 24"
               fill="none"
@@ -1534,14 +1532,17 @@ function LandingPage() {
               strokeLinecap="round"
               strokeLinejoin="round"
             >
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+              <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
             </svg>
           </a>
         </div>
 
         {/* FAQ Section */}
         <div ref={faqSectionRef} className="mt-16 sm:mt-24 mb-12 sm:mb-16 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-xl sm:text-4xl font-bold text-center mb-6 sm:mb-8">How can we help you?</h2>
+          <h2 className="text-2xl sm:text-4xl font-bold text-center mb-6 sm:mb-8">How can we help you?</h2>
 
           {/* Search Bar */}
           <div className="max-w-2xl mx-auto mb-8 sm:mb-12">
@@ -1590,7 +1591,7 @@ function LandingPage() {
                       animation: 'faqSlideDown 0.3s ease-out forwards'
                     }}
                   >
-                    <p className="text-gray-700 text-xs sm:text-sm text-right">{item.answer}</p>
+                    <p className="text-gray-700 text-base sm:text-sm text-right">{item.answer}</p>
                   </div>
                 )}
               </div>

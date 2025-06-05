@@ -4,6 +4,7 @@ import { motion } from 'framer-motion'
 import './App.css'
 import Calandry from './Calandry'
 import RescheduleConsultaion from './Landing page/RescheduleConsultaion'
+import logoImg from './Landing page/assets/Logo.png'
 
 const LandingPage = React.lazy(() => import('./Landing page/LandingPage1'))
 const AdminPanel = React.lazy(() => import('./AdminPanel/Index'))
@@ -53,66 +54,82 @@ const ScrollToTop = () => {
 }
 
 const LoadingSpinner = () => {
-  const letterVariants = {
-    initial: { y: -20, opacity: 0 },
-    animate: i => ({
-      y: 0,
-      opacity: 1,
+  const logoVariants = {
+    animate: {
+      scale:5,
+      
       transition: {
-        duration: 0.5,
-        delay: i * 0.1,
-        ease: "easeOut"
-      }
-    }),
-    hover: {
-      y: -10,
-      color: "#646cff",
-      transition: {
-        duration: 0.3
+        duration: 3,
+        repeat: Infinity,
+        ease: "easeInOut"
       }
     }
   }
 
-  const spinnerVariants = {
+  const glowVariants = {
     animate: {
-      rotate: 360,
-      scale: [1, 1.1, 1],
+      opacity: [0.4, 0.8, 0.4],
+      scale: [0.8, 1.2, 0.8],
       transition: {
-        rotate: {
-          duration: 1.5,
-          repeat: Infinity,
-          ease: "linear"
-        },
-        scale: {
-          duration: 2,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }
+        duration: 2,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }
+    }
+  }
+
+  const textVariants = {
+    animate: {
+      opacity: [0, 1],
+      y: [10, 0],
+      transition: {
+        duration: 1,
+        delay: 0.5
       }
     }
   }
 
   return (
     <div className="loading-container">
-      <div className="loading-text">
-        {['I', 'N', 'E', 'F', 'F', 'A'].map((letter, i) => (
-          <motion.span
-            key={i}
-            variants={letterVariants}
-            initial="initial"
-            animate="animate"
-            whileHover="hover"
-            custom={i}
-          >
-            {letter}
-          </motion.span>
-        ))}
+      <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <motion.div
+          variants={glowVariants}
+          animate="animate"
+          style={{
+            position: 'absolute',
+            width: '140px',
+            height: '140px',
+            borderRadius: '50%',
+            background: 'radial-gradient(circle, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 70%)',
+            zIndex: 0
+          }}
+        />
+        <motion.img 
+          src={logoImg}
+          alt="Ineffa Logo"
+          variants={logoVariants}
+          animate="animate"
+          style={{ 
+            width: '100px', 
+            height: 'auto',
+            zIndex: 1,
+            filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2))'
+          }}
+        />
       </div>
-      {/* <motion.div
-        className="loading-spinner"
-        variants={spinnerVariants}
+      <motion.p
+        variants={textVariants}
         animate="animate"
-      /> */}
+        style={{
+          marginTop: '20px',
+          fontSize: '16px',
+          fontWeight: '500',
+          color: '#333',
+          letterSpacing: '1px'
+        }}
+      >
+        Loading amazing experiences...
+      </motion.p>
     </div>
   )
 }
