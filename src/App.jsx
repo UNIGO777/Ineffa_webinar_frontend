@@ -1,154 +1,52 @@
-import React, { Suspense, useEffect, useState } from 'react'
-import { BrowserRouter, Routes, Route, useLocation, Navigate, useNavigate } from 'react-router-dom'
-import { motion } from 'framer-motion'
-import './App.css'
-import Calandry from './Calandry'
-import RescheduleConsultaion from './Landing page/RescheduleConsultaion'
-import logoImg from './Landing page/assets/Logo.png'
+import React, { Suspense } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate, useNavigate, useLocation } from 'react-router-dom';
+import './App.css';
+import LoadingSpinner from './LoadingSpinner';
 
-const LandingPage = React.lazy(() => import('./Landing page/LandingPage1'))
-const AdminPanel = React.lazy(() => import('./AdminPanel/Index'))
-const PaymentSuccess = React.lazy(() => import('./Landing page/PaymentSuccess'))
+// Using lazy loading for components
+const LandingPage = React.lazy(() => import('./Landing page/LandingPage1'));
+const AdminPanel = React.lazy(() => import('./AdminPanel/Index'));
+const PaymentSuccess = React.lazy(() => import('./Landing page/PaymentSuccess'));
+const WebinarPage = React.lazy(() => import('./Landing page/WebinarPage'));
 
 // Protected route component for PaymentSuccess page
 const ProtectedPaymentRoute = () => {
-  const location = useLocation()
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const location = useLocation();
   
-  // Check if user has payment verification in localStorage
-  const hasPaymentVerification = localStorage.getItem('paymentVerified') === 'true'
-  
-  // If no verification, redirect to home with a message
-  useEffect(() => {
-    if (!hasPaymentVerification && !location.state?.paymentDetails) {
-      // Set a message in localStorage to display on the landing page
-      localStorage.setItem('paymentRedirectMessage', 'Direct access to payment success page is not allowed. Please complete the payment process first.')
-      navigate('/', { replace: true })
+  React.useEffect(() => {
+    // Check if payment was verified
+    const paymentVerified = localStorage.getItem('paymentVerified');
+    
+    // If not verified, redirect to home
+    if (!paymentVerified) {
+      navigate('/');
+    } else {
+      // Clear the flag after checking
+      localStorage.removeItem('paymentVerified');
     }
-  }, [hasPaymentVerification, location.state, navigate])
+  }, [navigate]);
   
-  // Clear the verification after successful access
-  useEffect(() => {
-    return () => {
-      localStorage.removeItem('paymentVerified')
-    }
-  }, [])
-  
-  // If verification checks pass, render the PaymentSuccess component
-  if (!hasPaymentVerification && !location.state?.paymentDetails) {
-    return null // Return null while redirect happens in useEffect
-  }
-  
-  return <PaymentSuccess />
-}
+  // Return the component or null while checking
+  return location.state?.paymentDetails ? <PaymentSuccess /> : <LoadingSpinner />;
+};
 
-// Scroll to top component that executes on route change
-const ScrollToTop = () => {
-  const location = useLocation()
-  
-  useEffect(() => {
-    window.scrollTo(0, 0)
-  }, [location])
-
-  return null
-}
-
-const LoadingSpinner = () => {
-  const logoVariants = {
-    animate: {
-      scale:5,
-      
-      transition: {
-        duration: 3,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }
-    }
-  }
-
-  const glowVariants = {
-    animate: {
-      opacity: [0.4, 0.8, 0.4],
-      scale: [0.8, 1.2, 0.8],
-      transition: {
-        duration: 2,
-        repeat: Infinity,
-        ease: "easeInOut"
-      }
-    }
-  }
-
-  const textVariants = {
-    animate: {
-      opacity: [0, 1],
-      y: [10, 0],
-      transition: {
-        duration: 1,
-        delay: 0.5
-      }
-    }
-  }
-
+function App() {
   return (
-    <div className="loading-container">
-      <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-        <motion.div
-          variants={glowVariants}
-          animate="animate"
-          style={{
-            position: 'absolute',
-            width: '140px',
-            height: '140px',
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0) 70%)',
-            zIndex: 0
-          }}
-        />
-        <motion.img 
-          src={logoImg}
-          alt="Ineffa Logo"
-          variants={logoVariants}
-          animate="animate"
-          style={{ 
-            width: '100px', 
-            height: 'auto',
-            zIndex: 1,
-            filter: 'drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2))'
-          }}
-        />
+    <Router>
+      <div className="App">
+        <Suspense fallback={<LoadingSpinner />}>
+          <Routes>
+            <Route path="/" element={<Navigate to="/webinar" />} />
+            <Route path="/admin/*" element={<AdminPanel />} />
+            <Route path="/payment-success" element={<ProtectedPaymentRoute />} />
+            <Route path="/webinar" element={<WebinarPage />} />
+            <Route path="/landing" element={<LandingPage />} />
+          </Routes>
+        </Suspense>
       </div>
-      <motion.p
-        variants={textVariants}
-        animate="animate"
-        style={{
-          marginTop: '20px',
-          fontSize: '16px',
-          fontWeight: '500',
-          color: '#333',
-          letterSpacing: '1px'
-        }}
-      >
-        Loading amazing experiences...
-      </motion.p>
-    </div>
-  )
+    </Router>
+  );
 }
 
-const App = () => {
-  return (
-    <BrowserRouter>
-      <ScrollToTop />
-      <Suspense fallback={<LoadingSpinner />}>
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/admin/*" element={<AdminPanel />} />
-          <Route path="/calandry" element={<Calandry />} />
-          <Route path="/payment-success" element={<ProtectedPaymentRoute />} />
-          <Route path="/reshedule-consultaion" element={<RescheduleConsultaion />} />
-        </Routes>
-      </Suspense>
-    </BrowserRouter>
-  )
-}
-
-export default App
+export default App;

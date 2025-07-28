@@ -431,7 +431,7 @@ function LandingPage() {
     setFormError('');
 
     // Check if all required fields are filled
-    if (!bookingData.name || !bookingData.email || !bookingData.phone || !bookingData.message) {
+    if (!bookingData.name || !bookingData.email || !bookingData.phone ) {
       setFormError('Please fill in all required fields');
       return false;
     }
@@ -713,7 +713,7 @@ function LandingPage() {
             <p ref={subheadingRef} className="text-base sm:text-xl text-gray-700 mb-2 sm:mb-10">
               Book a 1-on-1 consultation with our UI/UX experts to identify pain points and actionable solutions for your business.
             </p>
-            <div className="flex justify-center mt-8">
+            <div className="flex flex-col sm:flex-row justify-center gap-4 mt-8">
               <a
                 href="#contact"
                 className="inline-flex items-center justify-center px-6 py-3 bg-transparent border-2 border-black hover:bg-black text-black hover:text-white font-medium rounded-full transition-colors duration-300 text-sm sm:text-base"
@@ -721,7 +721,7 @@ function LandingPage() {
               >
                 Book Consultation Now
                 <svg
-                  className="ml-2  -mr-1 w-4 h-4"
+                  className="ml-2 -mr-1 w-4 h-4"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -732,6 +732,27 @@ function LandingPage() {
                     strokeLinejoin="round"
                     strokeWidth="2"
                     d="M19 14l-7 7m0 0l-7-7m7 7V3"
+                  />
+                </svg>
+              </a>
+              <a
+                href="/webinar"
+                className="inline-flex items-center justify-center px-6 py-3 bg-purple-600 hover:bg-purple-700 text-white font-medium rounded-full transition-colors duration-300 text-sm sm:text-base"
+                aria-label="Book UI/UX Webinar"
+              >
+                Join UI/UX Webinar - ₹100 Only
+                <svg
+                  className="ml-2 -mr-1 w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M14 5l7 7m0 0l-7 7m7-7H3"
                   />
                 </svg>
               </a>

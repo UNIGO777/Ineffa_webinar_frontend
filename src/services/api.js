@@ -18,10 +18,10 @@ const getAuthHeader = () => {
   return token ? { Authorization: `Bearer ${token}` } : {};
 };
 
-// Consultation API services
-export const consultationService = {
-  // Get all consultations with optional pagination and filtering
-  getAllConsultations: async (page = 1, limit = 10, filters = {}) => {
+// Payment API services
+export const paymentService = {
+  // Get all payments with optional pagination and filtering
+  getAllPayments: async (page = 1, limit = 10, filters = {}) => {
     try {
       // Build query parameters
       const queryParams = new URLSearchParams({
@@ -38,11 +38,7 @@ export const consultationService = {
         queryParams.append('date', filters.date);
       }
       
-      if (filters.upcoming) {
-        queryParams.append('upcoming', 'true');
-      }
-      
-      const response = await fetch(`${API_URL}/consultations?${queryParams.toString()}`, {
+      const response = await fetch(`${API_URL}/payments?${queryParams.toString()}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -51,15 +47,15 @@ export const consultationService = {
       });
       return handleResponse(response);
     } catch (error) {
-      console.error('Error fetching consultations:', error);
+      console.error('Error fetching payments:', error);
       throw error;
     }
   },
   
-  // Get upcoming consultations
-  getUpcomingConsultations: async (limit = 5) => {
+  // Get payment by ID
+  getPayment: async (id) => {
     try {
-      const response = await fetch(`${API_URL}/consultations?upcoming=true&limit=${limit}`, {
+      const response = await fetch(`${API_URL}/payments/${id}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
@@ -68,83 +64,8 @@ export const consultationService = {
       });
       return handleResponse(response);
     } catch (error) {
-      console.error('Error fetching upcoming consultations:', error);
+      console.error(`Error fetching payment ${id}:`, error);
       throw error;
     }
-  },
-
-  // Get consultation by ID
-  getConsultation: async (id) => {
-    try {
-      const response = await fetch(`${API_URL}/consultations/${id}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          ...getAuthHeader(),
-        },
-      });
-      return handleResponse(response);
-    } catch (error) {
-      console.error(`Error fetching consultation ${id}:`, error);
-      throw error;
-    }
-  },
-
-  // Update consultation status
-  updateConsultationStatus: async (id, status, paymentStatus) => {
-    try {
-      const response = await fetch(`${API_URL}/consultations/${id}`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          ...getAuthHeader(),
-        },
-        body: JSON.stringify({ status, paymentStatus }),
-      });
-      return handleResponse(response);
-    } catch (error) {
-      console.error(`Error updating consultation ${id}:`, error);
-      throw error;
-    }
-  },
-
-  // Delete consultation
-  deleteConsultation: async (id) => {
-    try {
-      const response = await fetch(`${API_URL}/consultations/${id}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          ...getAuthHeader(),
-        },
-      });
-      
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Failed to delete consultation');
-      }
-      
-      return true; // Successfully deleted
-    } catch (error) {
-      console.error(`Error deleting consultation ${id}:`, error);
-      throw error;
-    }
-  },
-
-  // Get consultation statistics
-  getConsultationStats: async () => {
-    try {
-      const response = await fetch(`${API_URL}/consultations/stats`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          ...getAuthHeader(),
-        },
-      });
-      return handleResponse(response);
-    } catch (error) {
-      console.error('Error fetching consultation stats:', error);
-      throw error;
-    }
-  },
+  }
 };

@@ -6,9 +6,10 @@ import Navbar from './Components/Navbar';
 import Footer from './Components/Footer';
 import Home from './Pages/Home';
 import Payment from './Pages/Payment';
-import Consultations from './Pages/Consultations';
 import Login from './Pages/Login';
 import Notifications from './Pages/Notifications';
+import Webinars from './Pages/Webinars';
+import WebinarSessions from './Pages/WebinarSessions';
 
 
 
@@ -76,7 +77,8 @@ const Index = () => {
                   <Routes>
                     <Route path="dashboard" element={<Home/>} />
                     <Route path="payments" element={<Payments />} />
-                    <Route path="consultations" element={<Consultations />} />
+                    <Route path="webinars" element={<Webinars />} />
+                    <Route path="webinar-sessions" element={<WebinarSessions />} />
                     <Route path="login" element={<Login />} />
                     <Route path="notifications" element={<Notifications />} />
                     <Route path="/" element={<Navigate to="dashboard" replace />} />

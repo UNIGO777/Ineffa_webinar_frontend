@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
-import { LayoutDashboard, CreditCard, Calendar, Settings, LogOut, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, CreditCard, Settings, LogOut, ChevronRight, Video, Calendar } from 'lucide-react';
 import logoWhite from '../../Landing page/assets/WhiteLogo.png';
 
 const Sidebar = () => {
@@ -11,8 +11,8 @@ const Sidebar = () => {
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: <LayoutDashboard size={18} /> },
     { id: 'payments', label: 'Payments', icon: <CreditCard size={18} /> },
-    { id: 'consultations', label: 'Consultations', icon: <Calendar size={18} /> },
-    
+    { id: 'webinars', label: 'Webinars', icon: <Video size={18} /> },
+    { id: 'webinar-sessions', label: 'Sessions', icon: <Calendar size={18} /> },
   ];
 
   const navigate = useNavigate(); // Add this line t

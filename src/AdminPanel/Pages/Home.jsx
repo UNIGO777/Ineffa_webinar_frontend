@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { format } from 'date-fns';
-import { BarChart, LineChart, Calendar, Users, DollarSign, Clock, TrendingUp, CheckCircle, AlertCircle, IndianRupee } from 'lucide-react';
+import { BarChart, LineChart, Calendar, Users, DollarSign, Clock, TrendingUp, CheckCircle, AlertCircle, IndianRupee, Video } from 'lucide-react';
 import { dashboardService } from '../../services/dashboardService';
 import { useNavigate } from 'react-router-dom';
 
@@ -73,12 +73,12 @@ const Home = () => {
     growth: 0
   };
   
-  const consultationStats = dashboardData?.consultationStats || {
+  const webinarStats = dashboardData?.webinarStats || {
     total: 0,
     booked: 0,
     completed: 0,
     upcoming: 0,
-    canceled: 0,
+    pending: 0,
     growth: 0
   };
   
@@ -173,7 +173,7 @@ const Home = () => {
             </div>
           </motion.div>
           
-          {/* Total Consultations */}
+          {/* Total Webinars */}
           <motion.div 
             className="bg-white rounded-2xl transition-shadow duration-300 transform hover:-translate-y-1"
             variants={itemVariants}
@@ -181,25 +181,25 @@ const Home = () => {
             <div className='bg-white p-6 rounded-2xl transition-shadow duration-300 transform hover:-translate-y-1'>
               <div className="flex items-start space-x-4">
                 <div className="rounded-full bg-gradient-to-br from-purple-100 to-purple-200 p-4">
-                  <Users size={28} className="text-purple-600" />
+                  <Video size={28} className="text-purple-600" />
                 </div>
                 <div className="flex-1 text-left">
-                  <p className="text-sm font-medium text-gray-500">Total Consultations</p>
-                  <h3 className="text-2xl font-bold text-gray-800 mt-1">{consultationStats.total}</h3>
+                  <p className="text-sm font-medium text-gray-500">Total Webinars</p>
+                  <h3 className="text-2xl font-bold text-gray-800 mt-1">{webinarStats.total}</h3>
                 </div>
               </div>
               <div className="mt-4 grid grid-cols-3 gap-2 text-xs">
                 <div className="flex items-center">
                   <span className="w-2 h-2 rounded-full bg-green-500 mr-1"></span>
-                  <span>Completed: {consultationStats.completed}</span>
+                  <span>Completed: {webinarStats.completed}</span>
                 </div>
                 <div className="flex items-center">
                   <span className="w-2 h-2 rounded-full bg-blue-500 mr-1"></span>
-                  <span>Booked: {consultationStats.booked}</span>
+                  <span>Upcoming: {webinarStats.upcoming}</span>
                 </div>
                 <div className="flex items-center">
-                  <span className="w-2 h-2 rounded-full bg-red-500 mr-1"></span>
-                  <span>Canceled: {consultationStats.canceled || 0}</span>
+                  <span className="w-2 h-2 rounded-full bg-yellow-500 mr-1"></span>
+                  <span>Pending: {webinarStats.pending || 0}</span>
                 </div>
               </div>
             </div>
@@ -217,7 +217,7 @@ const Home = () => {
           <p className="text-red-500">{error}</p>
         </div>
       ) : (
-        <div className="grid grid-cols-1  gap-8">
+        <div className="grid grid-cols-1 gap-8">
           {/* Recent Payments */}
           <motion.div 
             className="bg-white rounded-2xl overflow-hidden"
@@ -315,16 +315,16 @@ const Home = () => {
           </div>
         </motion.div>
         
-        {/* Consultation Analytics */}
+        {/* Webinar Analytics */}
         <motion.div 
           className="bg-white p-6 rounded-2xl"
           variants={itemVariants}
         >
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-xl font-bold text-gray-800">Consultation Analytics</h2>
+            <h2 className="text-xl font-bold text-gray-800">Webinar Analytics</h2>
             <div className="flex items-center space-x-2">
               <span className="inline-block w-3 h-3 rounded-full bg-gradient-to-r from-purple-500 to-purple-600"></span>
-              <span className="text-sm text-gray-500">Consultations</span>
+              <span className="text-sm text-gray-500">Webinars</span>
             </div>
           </div>
           <div className="h-72 flex items-center justify-center">
@@ -338,8 +338,8 @@ const Home = () => {
               </div>
             ) : (
               <div className="w-full h-full flex items-end justify-around">
-                {analyticsData?.monthlyConsultations?.length > 0 ? (
-                  analyticsData.monthlyConsultations.map((data) => {
+                {analyticsData?.monthlyWebinars?.length > 0 ? (
+                  analyticsData.monthlyWebinars.map((data) => {
                     const monthNames = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
                     const month = monthNames[data.month - 1];
                     return (
@@ -354,7 +354,7 @@ const Home = () => {
                   })
                 ) : (
                   <div className="flex items-center justify-center w-full h-full">
-                    <p className="text-gray-500">No consultation data available</p>
+                    <p className="text-gray-500">No webinar data available</p>
                   </div>
                 )}
               </div>

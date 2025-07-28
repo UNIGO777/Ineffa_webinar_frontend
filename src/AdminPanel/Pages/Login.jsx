@@ -87,7 +87,7 @@ const Login = () => {
       }
 
       // Save token to localStorage
-      localStorage.setItem('adminToken', data.token);
+      localStorage.setItem('adminToken', data.data.token);
       localStorage.setItem('adminData', JSON.stringify(data.data.admin));
       
       // Redirect to admin dashboard

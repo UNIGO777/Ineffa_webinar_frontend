@@ -1,24 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
+import { Search, Download, Filter, ChevronDown, ChevronUp, ChevronsUpDown, IndianRupee, X, Printer, Calendar, Clock, User, Mail, Phone, Video, DollarSign, Loader, RefreshCcw, RefreshCw, ChevronLeft, ChevronRight } from 'lucide-react';
 import { format } from 'date-fns';
-import { 
-  Calendar, 
-  Filter, 
-  Search, 
-  Download, 
-  ChevronDown, 
-  ChevronLeft, 
-  ChevronRight,
-  CheckCircle,
-  XCircle,
-  Clock,
-  RefreshCw,
-  IndianRupee,
-  Loader,
-  FileText,
-  X
-} from 'lucide-react';
 import { paymentService } from '../../services/paymentService';
+import LoadingState from '../Components/LoadingState';
+import ErrorState from '../Components/ErrorState';
+
+
 
 const Payment = () => {
   // State for date range picker
@@ -49,6 +37,7 @@ const Payment = () => {
   // State for receipt modal
   const [showReceiptModal, setShowReceiptModal] = useState(false);
   const [receiptData, setReceiptData] = useState(null);
+  const receiptRef = useRef(null);
   
   // State for export modal
   const [showExportModal, setShowExportModal] = useState(false);
@@ -99,8 +88,8 @@ const Payment = () => {
     
     // Filter by search query
     if (searchQuery && !(
-      payment.consultationId?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      payment._id?.toLowerCase().includes(searchQuery.toLowerCase())
+      payment.transactionId?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      payment.webinarId?.name?.toLowerCase().includes(searchQuery.toLowerCase())
     )) {
       return false;
     }
@@ -183,6 +172,38 @@ const Payment = () => {
 
   // Handle generate receipt
   const handleGenerateReceipt = (payment) => {
+    setReceiptData(payment);
+    setShowReceiptModal(true);
+  };
+
+  // Update payment status
+  const handleUpdatePaymentStatus = async (id, newStatus) => {
+    try {
+      await paymentService.updatePaymentStatus(id, newStatus);
+      setShowViewModal(false); // Close modal after status update
+      setReceiptData(null); // Clear receipt data
+      fetchPayments(); // Refresh payments
+    } catch (err) {
+      console.error('Error updating payment status:', err);
+      setError('Failed to update payment status. Please try again.');
+      // Auto-hide error after 5 seconds
+      setTimeout(() => setError(null), 5000);
+    }
+  };
+
+  // Print receipt from modal
+  const handlePrintReceiptFromModal = () => {
+    if (receiptRef.current) {
+      const printContents = receiptRef.current.innerHTML;
+      const originalContents = document.body.innerHTML;
+      document.body.innerHTML = printContents;
+      window.print();
+      document.body.innerHTML = originalContents;
+    }
+  };
+
+  // Print receipt from receipt modal
+  const handlePrintReceipt = (payment) => {
     setReceiptData(payment);
     setShowReceiptModal(true);
   };
@@ -527,7 +548,7 @@ const Payment = () => {
                       {format(new Date(payment.createdAt), 'MMM dd, yyyy')}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-left text-sm text-gray-800">
-                      {payment.consultationId?.name || 'N/A'}
+                      {payment.webinarId?.name || 'N/A'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-left text-sm font-medium text-gray-800">
                       <div className="flex items-center">
@@ -669,7 +690,7 @@ const Payment = () => {
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-500">Customer</p>
-                      <p className="text-base text-gray-900">{selectedPayment.consultationId?.name || 'N/A'}</p>
+                      <p className="text-base text-gray-900">{selectedPayment.webinarId?.name || 'N/A'}</p>
                     </div>
                     <div>
                       <p className="text-sm font-medium text-gray-500">Amount</p>
@@ -695,21 +716,29 @@ const Payment = () => {
                     </div>
                   )}
                   
-                  {selectedPayment.consultationId && (
+                  {selectedPayment.webinarId && (
                     <div className="mt-6 pt-4 border-t border-gray-200">
-                      <h4 className="text-base font-medium text-gray-900 mb-3">Consultation Details</h4>
+                      <h4 className="text-base font-medium text-gray-900 mb-3">Webinar Details</h4>
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <p className="text-sm font-medium text-gray-500">Service</p>
-                          <p className="text-base text-gray-900">{selectedPayment.consultationId.service || 'N/A'}</p>
+                          <p className="text-base text-gray-900">{selectedPayment.webinarId.name || 'N/A'}</p>
                         </div>
                         <div>
                           <p className="text-sm font-medium text-gray-500">Date & Time</p>
                           <p className="text-base text-gray-900">
-                            {selectedPayment.consultationId.slotDate ? 
-                              `${format(new Date(selectedPayment.consultationId.slotDate), 'MMM dd, yyyy')} at ${selectedPayment.consultationId.slotStartTime}` : 
+                            {selectedPayment.webinarId.webinarDate ? 
+                              `${format(new Date(selectedPayment.webinarId.webinarDate), 'MMM dd, yyyy')} at ${selectedPayment.webinarId.webinarStartTime}` : 
                               'N/A'}
                           </p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-500">Email</p>
+                          <p className="text-base text-gray-900">{selectedPayment.webinarId.email || 'N/A'}</p>
+                        </div>
+                        <div>
+                          <p className="text-sm font-medium text-gray-500">Phone</p>
+                          <p className="text-base text-gray-900">{selectedPayment.webinarId.phone || 'N/A'}</p>
                         </div>
                       </div>
                     </div>
@@ -764,11 +793,11 @@ const Payment = () => {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Customer:</span>
-                    <span className="text-gray-900">{receiptData.consultationId?.name || 'N/A'}</span>
+                    <span className="text-gray-900">{receiptData.webinarId?.name || 'N/A'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Service:</span>
-                    <span className="text-gray-900">{receiptData.consultationId?.service || 'Consultation'}</span>
+                    <span className="text-gray-900">{receiptData.webinarId?.name || 'Webinar'}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-600">Payment Method:</span>
