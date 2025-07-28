@@ -2,8 +2,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Helmet } from 'react-helmet';
-import { Calendar, Clock, CheckCircle, X, Monitor, Zap, Users, Award, ArrowRight, ThumbsUp, BookOpen, MessageCircle, Star, Download, ChevronDown, ChevronUp, Play, Video, User, Phone, Mail, Gift } from 'lucide-react';
+import { Calendar, Clock, CheckCircle, X, Monitor, Zap, Users, Award, ArrowRight, ThumbsUp, BookOpen, MessageCircle, Star, Download, ChevronDown, ChevronUp, Play, User, Phone, Mail, Gift } from 'lucide-react';
 import './LandingPage.css';
+import video2 from './assets/video.mp4'
 
 // Import assets
 import logoImg from './assets/Logo.png';
@@ -14,6 +15,8 @@ import miroLogo from './assets/miro-logo-svg-150px.svg';
 
 // Import service
 import { webinarService } from '../services/webinarService';
+import CarouselDemo from '../components/CarouselDemo';
+import CurvedCarousel from '../Carosel';
 
 const WebinarPage = () => {
   const navigate = useNavigate();
@@ -589,6 +592,8 @@ const WebinarPage = () => {
         <h3 className="text-xl font-semibold mb-2">Interactive Session</h3>
         <p className="text-gray-600">Ask questions in real-time and get personalized advice for your projects</p>
       </motion.div>
+
+      
       
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -631,6 +636,8 @@ const WebinarPage = () => {
             </div>
           </div>
 
+
+
           {/* Hero Section */}
           <section ref={headingRef} className="mt-2 sm:mt-20 text-center max-w-4xl mx-auto">
             <h1 ref={subheadingRef} className="text-2xl sm:text-2xl lg:text-5xl font-bold leading-tight mb-4 sm:mb-6">
@@ -651,6 +658,34 @@ const WebinarPage = () => {
             </div>
           </section>
         </header>
+        <section className="mt-8 sm:mt-24  max-w-5xl mx-auto ">
+                    <div className="bg-gray-50  overflow-hidden ">
+                      <div className="relative w-full aspect-video bg-black">
+                        <video
+                          src={video2}
+                          title="Ineffa - How to improve your fintech app's UX design"
+                          controls
+                          muted
+                          loop
+                          playsInline
+                          // autoPlay
+                          className="w-full h-full object-cover"
+                          allowFullScreen
+                          onPlay={(e) => {
+                            // Ensure video plays when play button is clicked
+                            const playPromise = e.target.play();
+                            if (playPromise !== undefined) {
+                              playPromise.catch(error => {
+                                console.log("Video play failed:", error);
+                              });
+                            }
+                          }}
+                        ></video>
+                      </div>
+                    </div>
+                  </section>
+
+        <CurvedCarousel/>
 
         {/* Main content */}
         <main className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -755,6 +790,8 @@ const WebinarPage = () => {
               </button>
             </div>
           </section>
+
+          
         </main>
         
         {/* Footer */}

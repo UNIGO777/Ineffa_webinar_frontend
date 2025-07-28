@@ -14,6 +14,11 @@ export default {
       fontFamily: {
         sans: ['Inter', 'sans-serif'],
       },
+      perspective: {
+        '1000': '1000px',
+        '1500': '1500px',
+        '2000': '2000px',
+      },
     },
   },
   plugins: [],
