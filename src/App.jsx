@@ -4,7 +4,7 @@ import './App.css';
 import LoadingSpinner from './LoadingSpinner';
 
 // Using lazy loading for components
-const LandingPage = React.lazy(() => import('./Landing page/LandingPage1'));
+
 const AdminPanel = React.lazy(() => import('./AdminPanel/Index'));
 const PaymentSuccess = React.lazy(() => import('./Landing page/PaymentSuccess'));
 const WebinarPage = React.lazy(() => import('./Landing page/WebinarPage'));
@@ -37,11 +37,11 @@ function App() {
       <div className="App">
         <Suspense fallback={<LoadingSpinner />}>
           <Routes>
-            <Route path="/" element={<Navigate to="/webinar" />} />
+            <Route path="/" element={<WebinarPage />} />
             <Route path="/admin/*" element={<AdminPanel />} />
             <Route path="/payment-success" element={<ProtectedPaymentRoute />} />
-            <Route path="/webinar" element={<WebinarPage />} />
-            <Route path="/landing" element={<LandingPage />} />
+            
+           
           </Routes>
         </Suspense>
       </div>
