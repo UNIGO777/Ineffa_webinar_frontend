@@ -421,8 +421,8 @@ const WebinarPage = () => {
       <h3 className="text-2xl font-bold mb-6 text-center">What You'll Learn</h3>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white p-6 rounded-xl shadow-sm">
-          <div className="flex items-start mb-4">
-            <div className="rounded-full bg-black/5 w-10 h-10 flex items-center justify-center mr-4 flex-shrink-0">
+          <div className="flex flex-col justify-center items-center mb-4">
+            <div className="rounded-full bg-black/5 w-10 h-10 flex mb-4 items-center justify-center mr-4 flex-shrink-0">
               <span className="font-semibold">1</span>
             </div>
             <div>
@@ -446,8 +446,8 @@ const WebinarPage = () => {
         </div>
         
         <div className="bg-white p-6 rounded-xl shadow-sm">
-          <div className="flex items-start mb-4">
-            <div className="rounded-full bg-black/5 w-10 h-10 flex items-center justify-center mr-4 flex-shrink-0">
+          <div className="flex flex-col justify-center items-center mb-4">
+            <div className="rounded-full bg-black/5 w-10 h-10 mb-4 flex items-center justify-center mr-4 flex-shrink-0">
               <span className="font-semibold">2</span>
             </div>
             <div>
@@ -471,8 +471,8 @@ const WebinarPage = () => {
         </div>
         
         <div className="bg-white p-6 rounded-xl shadow-sm">
-          <div className="flex items-start mb-4">
-            <div className="rounded-full bg-black/5 w-10 h-10 flex items-center justify-center mr-4 flex-shrink-0">
+          <div className="flex flex-col justify-center items-center mb-4">
+            <div className="rounded-full bg-black/5 w-10 h-10 flex mb-4 items-center justify-center mr-4 flex-shrink-0">
               <span className="font-semibold">3</span>
             </div>
             <div>
@@ -496,8 +496,8 @@ const WebinarPage = () => {
         </div>
         
         <div className="bg-white p-6 rounded-xl shadow-sm">
-          <div className="flex items-start mb-4">
-            <div className="rounded-full bg-black/5 w-10 h-10 flex items-center justify-center mr-4 flex-shrink-0">
+          <div className="flex flex-col justify-center items-center mb-4">
+            <div className="rounded-full bg-black/5 w-10 h-10 flex mb-4 items-center justify-center mr-4 flex-shrink-0">
               <span className="font-semibold">4</span>
             </div>
             <div>
@@ -571,7 +571,7 @@ const WebinarPage = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="bg-gray-50 p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300"
+        className="bg-gray-50 p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center hover:shadow-md transition-all duration-300"
       >
         <div className="rounded-full bg-black/5 w-12 h-12 flex items-center justify-center mb-4">
           <Zap className="h-6 w-6 text-black" />
@@ -584,7 +584,7 @@ const WebinarPage = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-gray-50 p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300"
+        className="bg-gray-50 p-6 rounded-xl flex flex-col justify-center items-center shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300"
       >
         <div className="rounded-full bg-black/5 w-12 h-12 flex items-center justify-center mb-4">
           <Users className="h-6 w-6 text-black" />
@@ -599,7 +599,7 @@ const WebinarPage = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
-        className="bg-gray-50 p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300"
+        className="bg-gray-50 p-6 rounded-xl flex flex-col justify-center items-center shadow-sm border border-gray-100 hover:shadow-md transition-all duration-300"
       >
         <div className="rounded-full bg-black/5 w-12 h-12 flex items-center justify-center mb-4">
           <Award className="h-6 w-6 text-black" />
@@ -659,7 +659,7 @@ const WebinarPage = () => {
           </section>
         </header>
         <section className="mt-8 sm:mt-24  max-w-5xl mx-auto ">
-                    <div className="bg-gray-50  overflow-hidden ">
+                    <div className="bg-gray-50 overflow-hidden ">
                       <div className="relative w-full aspect-video bg-black">
                         <video
                           src={video2}
